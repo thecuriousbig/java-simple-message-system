@@ -40,7 +40,7 @@ public class MessageCollection
         }
     }
 
-    public int getMessagesAmout()
+    public int getMessagesAmount()
     {
         return messages.size();
     }
@@ -48,6 +48,11 @@ public class MessageCollection
     public ArrayList<Message> getMessages()
     {
         return messages;
+    }
+
+    public void setMessages(ArrayList<Message> messages)
+    {
+        this.messages = messages;
     }
 
     public Message getOneMessage(int index)

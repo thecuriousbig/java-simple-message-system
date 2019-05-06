@@ -18,48 +18,13 @@ public class Client
     /* Inbox is a received message collection*/
     private static MessageCollection inbox;
 
-    /* Instance of this class*/
-    private static Client instance = null;
-
     /**
      *  Constructor of singleton class
      * */
-    // TODO: 12-Apr-19 get inbox from database
-    private Client()
-    {
-        /* Nothing here */
-        /* Use initialize() for init member data instead */
-    }
-
-    /**
-     *  Get instance of this class
-     *  @return instance of client class
-     * */
-    public static Client getInstance()
-    {
-        if (instance == null)
-            instance = new Client();
-        return instance;
-    }
-
-    /**
-     * Initialize client again
-     * */
-    // TODO: 12-Apr-19 get inbox from database
-    public void initialize(String username, String password)
+    public Client(String username, String password)
     {
         this.username = username;
         this.password = password;
-    }
-
-    /**
-     * Reset client
-     * */
-    public boolean reset()
-    {
-        instance = null;
-        inbox = null;
-        return true;
     }
 
     /**
@@ -67,62 +32,9 @@ public class Client
      * @return true if create successful and send,
      *          false if cancel.
      * */
-    public boolean createMessage()
+    public void createMessage()
     {
-        return Editor.createMessage(username);
-    }
-
-    /**
-     *  forward a selected message
-     *  @return     true if forward successful,
-     *              false if cancel.
-     * */
-    public boolean forwardMessage(Message message)
-    {
-        return Editor.createForwardMessage(message,getUsername());
-    }
-
-    /**
-     * Show all receive message in Inbox message
-     * */
-    public void showInbox()
-    {
-        System.out.println("INBOX\n");
-        if(getInbox().getMessagesAmout() == 0)
-        {
-            System.out.println("No such any message in the inbox.");
-        }
-        else
-        {
-            getInbox().showAllMessages();
-            System.out.println("-------------------------------------------");
-
-            int index = -1;
-
-            while (index == -1)
-            {
-                index = IOUtils.getInteger("Select message by index [1-" + getInbox().getMessagesAmout()
-                        +" or 0 for no select] : ");
-            }
-            if (index>0 && index<getInbox().getMessagesAmout())
-            {
-                Message selectedMsg = inbox.getMessages().get(index);
-                selectedMsg.showMessage();
-                String option = IOUtils.getString("\nSelect option \n [F]FORWARD \n [R]REPLY \n [N]NONE");
-                option = option.toLowerCase();
-                switch (option)
-                {
-                    case "F":
-                        Editor.createForwardMessage(selectedMsg,getUsername());
-
-                    case "R":
-                        Editor.createReplyMessage(selectedMsg,getUsername());
-
-                    case "N":
-                        System.out.println("=============================================");
-                }
-            }
-        }
+        Editor.createMessage(username);
     }
 
     /**
@@ -135,6 +47,34 @@ public class Client
     }
 
     /**
+     * Set username of this client user
+     *
+     * @param username name of this user
+     */
+    public void setUsername(String username)
+    {
+        this.username = username;
+    }
+
+    /**
+     * get password of this client user
+     *
+     * @return client's password
+     */
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Set password of this client user
+     *
+     * @param password of this user
+     */
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    /**
      *  Get all received messages of this client user
      *  @return message collection of received message
      * */
@@ -144,21 +84,103 @@ public class Client
     }
 
     /**
-     *  Set username of this client user
-     *  @param username     name of this user
-     * */
-    public void setUsername(String username)
-    {
-        this.username = username;
-    }
-
-    /**
-     *  Assign inbox of this client
-     *  @param messages message collection of receive message.
-     * */
+     * Assign inbox of this client
+     *
+     * @param messages message collection of receive message.
+     */
     public void setInbox(MessageCollection messages)
     {
         inbox = messages;
+    }
+
+    /**
+     *  forward a selected message
+     *  @return     true if forward successful,
+     *              false if cancel.
+     * */
+    public void forwardMessage(Message message)
+    {
+        if (Editor.createForwardMessage(message, this.getUsername()))
+            System.out.println("forward message success");
+        else
+            System.out.println("forward message failed");
+    }
+
+    /**
+     * reply a selected message
+     *
+     * @return true if forward successful
+     *         false if cancel.
+     */
+    public void replyMessage(Message message)
+    {
+        if (Editor.createReplyMessage(message, this.getUsername()))
+            System.out.println("reply message success");
+        else
+            System.out.println("reply message failed");
+    }
+
+    /**
+     * Update and fetch all the messages in the inbox
+     */
+    public void updateInbox()
+    {
+        /* Create serverHandler */
+        ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
+        /* Connect with server */
+        serverHandler.connect();
+
+        /* Create a packet to send to the server */
+        Packet packet = new Packet().setCommand("getMessage").setUsername(this.username);
+        /* send request to server */
+        serverHandler.send(packet);
+        /* receive messages */
+        Packet receivePacket = serverHandler.receive();
+        /* update the message collection (inbox) */
+        this.getInbox().setMessages(receivePacket.getInboxMessage());
+    }
+
+
+    /**
+     * Show all receive message in Inbox message
+     * */
+    public void showInbox()
+    {
+        System.out.println("INBOX\n");
+        this.updateInbox();
+        if(this.getInbox().getMessagesAmount() == 0)
+        {
+            System.out.println("No such any message in the inbox.");
+        }
+        else
+        {
+            this.getInbox().showAllMessages();
+            System.out.println("-------------------------------------------");
+
+            int index = -1;
+
+            while (index == -1)
+            {
+                index = IOUtils.getInteger("Select message by index [1-" + getInbox().getMessagesAmount()
+                        +" or 0 for no select] : ");
+            }
+            if (index > 0 && index < getInbox().getMessagesAmount())
+            {
+                Message selectedMsg = inbox.getMessages().get(index);
+                selectedMsg.showMessage();
+                String option = IOUtils.getString("\nSelect option \n [F]FORWARD \n [R]REPLY \n [N]NONE");
+                option = option.toUpperCase();
+                switch (option)
+                {
+                    case "F":
+                        this.forwardMessage(selectedMsg);
+                    case "R":
+                        this.replyMessage(selectedMsg);
+                    case "N":
+                        System.out.println("=============================================");
+                }
+            }
+        }
     }
 
 }

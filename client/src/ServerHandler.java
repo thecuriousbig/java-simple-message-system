@@ -1,31 +1,58 @@
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.net.Socket;
+// import java.io.Serializable;
 
 /**
  * ServerHandler.java
- * 
+ *
  * Handle all operation that relate to connect or communicate with server
- * 
+ *
  * Created by Tanatorn Nateesanprasert (big) 59070501035
  *            Manchuporn Pungtippimanchai (mai) 59070501060
  */
-
-public class ServerHandler extends Thread
+public class ServerHandler
 {
-    private Socket conn;
+    // private static final long serialVersionUID = 1L;
+    protected String address;
+    protected int port;
+    protected Socket socket = null;
 
     /**
-     * Constructor use to initialize socket object
-     * @param conn
+     * Constructor use to initialize socket
+     * @param address address of the server
+     * @param port port number to connect with the server
      */
-    ServerHandler(Socket conn)
+    public ServerHandler(String address, int port)
     {
-        this.conn = conn;
+        this.address = address;
+        this.port = port;
     }
 
-    @Override
-    public void run()
+    public boolean connect()
     {
-        /* Implement here */
+        boolean isSuccess = true;
+        // establish a connection with server
+        try
+        {
+            this.socket = new Socket(this.address, this.port);
+            System.out.println("connecting to the server ..");
+        }
+        catch (UnknownHostException ue)
+        {
+            System.out.println(ue);
+            isSuccess = false;
+        }
+        catch (IOException i)
+        {
+            System.out.println(i);
+            isSuccess = false;
+        }
+        return isSuccess;
     }
 
     /**
@@ -33,19 +60,58 @@ public class ServerHandler extends Thread
      * @param obj object that want to send to server
      * @return success flag of this send operation
      */
-    public boolean send(Object obj)
+    public boolean send(Packet packet)
     {
-        /* Implement here */
-        return true;
+        boolean isSuccess = true;
+        try
+        {
+            /* Create objectOutputStream to send an object to server */
+            OutputStream outputStream = socket.getOutputStream();
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
+
+            /* Send the packet to server */
+            objectOutputStream.writeObject(packet);
+
+            /* close the outputstream */
+            /* wait a second to make sure that outputstream is finish their job before close it */
+            // outputStream.close();
+            // objectOutputStream.close();
+        }
+        catch (Exception e)
+        {
+            isSuccess = false;
+        }
+
+        return isSuccess;
     }
 
     /**
      * Receive any object that sent from server
-     * @return object that sent from server
+     * @return packet that sent from server
      */
-    public Object receive()
+    public Packet receive()
     {
-        /* Implement here */
+        Packet receivePacket = null;
+        try
+        {
+            /* Create objectInputStream to receive an object from server */
+            InputStream inputStream = socket.getInputStream();
+            ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
+
+            /* looping until server send something */
+            while (receivePacket == null)
+            {
+                receivePacket = (Packet) objectInputStream.readObject();
+            }
+            Thread.sleep(500);
+            inputStream.close();
+            objectInputStream.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        return receivePacket;
     }
 
     /**
@@ -53,6 +119,13 @@ public class ServerHandler extends Thread
      */
     public void close()
     {
-        /* Implement here */
+        try
+        {
+            socket.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println("close socket failed");
+        }
     }
 }

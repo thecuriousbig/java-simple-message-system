@@ -32,71 +32,10 @@ public class Message
     /**
      *  Constructor of the message
      * */
-    public Message(String to, String from, String bodyMessage,String subject)
+    public Message()
     {
-        this.to = to;
-        this.from = from;
-        this.bodyMessage = bodyMessage;
-        this.subject = subject;
         this.dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         this.createdDate = new Date();
-    }
-
-    public void setBodyMessage(String bodyMessage)
-    {
-        this.bodyMessage = bodyMessage;
-    }
-
-    public void setCreatedDate(Date createdDate)
-    {
-        this.createdDate = createdDate;
-    }
-
-    public void setDeliverDate(Date deliverDate)
-    {
-        this.deliverDate = deliverDate;
-    }
-
-    public void setToAddress(String to)
-    {
-        this.to = to;
-    }
-
-    public void setFromAddress(String from)
-    {
-        this.from = from;
-    }
-
-    public void setSubject(String subject)
-    {
-        this.subject = subject;
-    }
-
-    /**
-     *  Add new reply message to this message
-     *  @param replyMessage     the message that you would like to reply
-     * */
-    public void addReplyMessage(Message replyMessage)
-    {
-        this.replyMessages.add(replyMessage);
-    }
-
-    /**
-     *  Get date and time which create message
-     *  @return date and time in yyyy/MM/dd HH:mm:ss format
-     * */
-    public Date getCreatedDate()
-    {
-        return createdDate;
-    }
-
-    /**
-     *  Get date and time which deliver message
-     *  @return date and time in yyyy/MM/dd HH:mm:ss format
-     * */
-    public Date getDeliverDate()
-    {
-        return deliverDate;
     }
 
     /**
@@ -118,21 +57,21 @@ public class Message
     }
 
     /**
-     *  Get the body message of this message
-     *  @return body message
-     * */
-    public String getBodyMessage()
-    {
-        return bodyMessage;
-    }
-
-    /**
      *  Get Subject of the message
      *  @return message's subject
      * */
     public String getSubject()
     {
         return subject;
+    }
+
+    /**
+     *  Get the body message of this message
+     *  @return body message
+     * */
+    public String getBodyMessage()
+    {
+        return bodyMessage;
     }
 
     /**
@@ -145,6 +84,23 @@ public class Message
     }
 
     /**
+     *  Get date and time which create message
+     *  @return date and time in yyyy/MM/dd HH:mm:ss format
+     * */
+    public Date getCreatedDate()
+    {
+        return createdDate;
+    }
+
+    /**
+     *  Get date and time which deliver message
+     *  @return date and time in yyyy/MM/dd HH:mm:ss format
+     * */
+    public Date getDeliverDate()
+    {
+        return deliverDate;
+    }
+    /**
      *  Format of Date
      *  @return format yyyy/MM/dd HH:mm:ss
      * */
@@ -153,18 +109,55 @@ public class Message
         return dateFormat;
     }
 
-    /**
-     *  Show information of this message
-     * */
-    @Override
-    public String toString()
+    public Message setToAddress(String to)
     {
-        return "Message subject : " + subject + '\n' +
-                " created date : " + createdDate +
-                " deliver date : " + deliverDate +
-                "\n to : '" + to + '\t' + ", from : '" + from + '\n' +
-                " bodyMessage : \n " + bodyMessage + '\n' +
-                "Reply (" +replyMessages.size() + ")\n";
+        this.to = to;
+        return this;
+    }
+
+    public Message setFromAddress(String from)
+    {
+        this.from = from;
+        return this;
+    }
+
+    public Message setSubject(String subject)
+    {
+        this.subject = subject;
+        return this;
+    }
+
+    /**
+     * Get the body message of this message
+     *
+     * @return body message
+     */
+    public Message setBodyMessage(String bodyMessage)
+    {
+        this.bodyMessage = bodyMessage;
+        return this;
+    }
+
+    /**
+     *  Add new reply message to this message
+     *  @param replyMessage     the message that you would like to reply
+     * */
+    public Message addReplyMessage(Message replyMessage)
+    {
+        this.replyMessages.add(replyMessage);
+        return this;
+    }
+
+    public Message setCreatedDate(Date createdDate)
+    {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public Message setDeliverDate(Date deliverDate)
+    {
+        this.deliverDate = deliverDate;
+        return this;
     }
 
     /**
@@ -172,17 +165,28 @@ public class Message
      * */
     public void showMessage()
     {
-        System.out.println("--------------------------------------------");
-        System.out.println(getSubject()+"\n");
-        System.out.println("from : " + getFromAddress() + "\t\t" + getDeliverDate());
-        System.out.println("to : " + getToAddress());
-        System.out.println("\n" + getBodyMessage() + "\n");
-
-        for(Message msg : replyMessages)
+        System.out.println("-------------------------------------------------");
+        System.out.println("[Message created at " + this.createdDate + "]");
+        System.out.println("-------------------------------------------------");
+        System.out.println("SUBJECT:    " + this.getSubject());
+        System.out.println("FROM:    " + this.getFromAddress());
+        System.out.println("TO:    " + this.getToAddress());
+        System.out.println("-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -");
+        System.out.println(this.getBodyMessage());
+        System.out.println("-------------------------------------------------");
+        System.out.println("[Message sent at " + this.getDeliverDate() + "]");
+        System.out.println("-------------------------------------------------");
+        for (Message msg : this.getReplyMessages())
         {
-            System.out.println("\tfrom : " + msg.getFromAddress() + "\t\t" + msg.getDeliverDate());
-            System.out.println("\n\t" + msg.getBodyMessage());
-            System.out.println("\t--------------------------------------");
+            System.out.println(".................................................");
+            System.out.println("SUBJECT    " + msg.getBodyMessage());
+            System.out.println("FROM:    " + msg.getFromAddress());
+            System.out.println("TO:    " + msg.getToAddress());
+            System.out.println("-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -");
+            System.out.println(msg.getBodyMessage());
+            System.out.println(".................................................");
+            System.out.println("[Reply sent at " + msg.getDeliverDate() + "]");
+            System.out.println(".................................................");
         }
     }
 }

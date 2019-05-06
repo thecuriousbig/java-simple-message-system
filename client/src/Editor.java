@@ -1,32 +1,85 @@
 
 public class Editor
 {
-    public static boolean createMessage(String username)
+
+    public static void createMessage(String username)
     {
-        return false;
+        Message msg = new Message();
+        String to = IOUtils.getString("==> Enter To email address");
+        Editor.setMessageToAddress(msg, to);
+        String from = IOUtils.getString("==> Enter From email address");
+        Editor.setMessageFromAddress(msg, from);
+        String subject = IOUtils.getString("==> Enter email subject");
+        Editor.setMessageSubject(msg, subject);
+        System.out.println("==> Enter message text below. Type END to  finish.");
+        String body = null;
+        while (true) {
+            String line = IOUtils.getBareString();
+            if (line.compareTo("END\r") == 0)
+                break;
+
+            Editor.addBody(body, line);
+        }
+        Editor.setMessageBody(msg, body);
+        msg.showMessage();
+        String response = IOUtils.getString("\nSend the message ? [yes/no] ");
+        if (response.equalsIgnoreCase("yes"))
+        {
+            Editor.sendMessage(msg, to);
+        }
     }
 
-    public static boolean setMessageToAddress(Message msg, String to)
+    public static void setMessageToAddress(Message msg, String to)
     {
         msg.setToAddress(to);
-        return true;
     }
 
-    public static boolean setMessageFromSubject(Message msg, String subject)
+    public static void setMessageFromAddress(Message msg, String from)
+    {
+        msg.setFromAddress(from);
+    }
+
+    public static void setMessageSubject(Message msg, String subject)
     {
         msg.setSubject(subject);
-        return true;
     }
 
-    public static boolean setMessageBody(Message msg, String body)
+    public static void setMessageBody(Message msg, String body)
     {
         msg.setBodyMessage(body);
-        return true;
     }
 
-    public static boolean sendMessage(Message msg)
+    /**
+     * Method to add a message to an email.
+     *
+     * @param message
+     */
+    public static void addBody(String body, String line)
     {
-        return false;
+        if (body.length() > 0)
+            body += '\n' + line;
+        else
+            body = line;
+    }
+
+    public static boolean sendMessage(Message msg, String to)
+    {
+        ServerHandler serverHandler =  new ServerHandler("127.0.0.1", 8080);
+        Packet packet = new Packet().setCommand("sendMessage").setUsername(to);
+
+        /* connect to server */
+        boolean isConnect = serverHandler.connect();
+        if (!isConnect) {
+            System.out.println("cannot connect to server!");
+            return false;
+        }
+
+        /* send the message */
+        serverHandler.send(packet);
+
+        Packet receivePacket = serverHandler.receive();
+        serverHandler.close();
+        return receivePacket.getIsSuccess();
     }
 
     public static boolean createReplyMessage(Message msg, String username)
@@ -51,21 +104,37 @@ public class Editor
             replyMsg = replyMsg + line + "\n";
         }
 
-        while (true)
+        String decision = IOUtils.getString("Send[Y], Cancel[N]: ");
+        if(decision.equalsIgnoreCase("Y"))
         {
-            String decision = IOUtils.getString("Send[Y], Cancel[N]: ");
-            if(decision.equalsIgnoreCase("Y"))
-            {
-                Message reply = new Message(to,from,replyMsg,"RE:"+msg.getSubject());
-                msg.addReplyMessage(reply);
-                return true;
-            }
-            else if(decision.equalsIgnoreCase("N"))
+            Message reply = new Message().setToAddress(to).setFromAddress(from).setSubject("RE:" + msg.getSubject());
+            msg.addReplyMessage(reply);
+            ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
+            Packet packet = new Packet().setCommand("replyMessage").setUsername(msg.getToAddress());
+
+            /* connect to server */
+            boolean isConnect = serverHandler.connect();
+            if (!isConnect) {
+                System.out.println("cannot connect to server!");
                 return false;
-            else
-            {
-                System.out.println("Error : Bad input");
             }
+
+            /* send reply message */
+            serverHandler.send(packet);
+
+            Packet receivePacket = serverHandler.receive();
+            serverHandler.close();
+            return receivePacket.getIsSuccess();
+        }
+        else if(decision.equalsIgnoreCase("N"))
+        {
+            System.out.println("cancel operation!");
+            return false;
+        }
+        else
+        {
+            System.out.println("Error : Bad input");
+            return false;
         }
     }
 
@@ -92,8 +161,8 @@ public class Editor
             String decision = IOUtils.getString("Send[Y], Cancel[N]: ");
             if(decision.equalsIgnoreCase("Y"))
             {
-                Message newMsg = new Message(to,from,forwardMsg,subject);
-                sendMessage(newMsg);
+                Message newMsg = new Message().setToAddress(to).setFromAddress(from).setBodyMessage(forwardMsg).setSubject(subject);
+                sendMessage(newMsg, to);
                 return true;
             }
             else if(decision.equalsIgnoreCase("N"))
