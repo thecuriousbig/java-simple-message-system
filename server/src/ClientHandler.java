@@ -1,3 +1,4 @@
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ObjectInputStream;
@@ -5,13 +6,14 @@ import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
-// import java.io.Serializable;
-
-import javax.lang.model.util.ElementScanner6;
 
 /**
- * ClientHandler.java
- * Handle the client that connect to the server
+ * Handle the client that connect to the server.
+ * Receive a connection from client and analyze the packet that sent along with the connection.
+ * Some operations such as 1. login
+ *                         2. register
+ *                         3. send the message
+ *                         4. get the messages
  *
  * Created by Tanatorn Nateesanprasert (big) 59070501035
  *            Manchuporn Pungtippimanchai (mai) 59070501060
@@ -19,9 +21,8 @@ import javax.lang.model.util.ElementScanner6;
 
 public class ClientHandler implements Runnable
 {
-    // private static final long serialVersionUID = 1L;
     protected Socket clientSocket = null;
-    // protected ArrayList<Message> inboxMessage = null;
+
     /**
      * Constructor of this class
      * Use for initialize member data

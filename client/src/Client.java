@@ -123,21 +123,52 @@ public class Client
     /**
      * Update and fetch all the messages in the inbox
      */
-    public void updateInbox()
+    public boolean updateInbox()
     {
         /* Create serverHandler */
         ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
-        /* Connect with server */
-        serverHandler.connect();
-
         /* Create a packet to send to the server */
         Packet packet = new Packet().setCommand("getMessage").setUsername(this.username);
-        /* send request to server */
-        serverHandler.send(packet);
-        /* receive messages */
+        /* connect to server */
+        boolean isConnect = serverHandler.connect();
+        if (!isConnect)
+        {
+            System.out.println("cannot connect to server!");
+            return false;
+        }
+
+        System.out.println("sending .. ");
+        try
+        {
+            Thread.sleep(1000);
+        }
+        catch (Exception e)
+        {
+        }
+        /* send the message */
+        boolean bOk = serverHandler.send(packet);
+        if (bOk)
+        {
+            System.out.println("waiting for response ..");
+        }
+        try
+        {
+            Thread.sleep(1000);
+        }
+        catch (Exception e)
+        {
+        }
         Packet receivePacket = serverHandler.receive();
+
+        /* if sent message successful */
+        if (receivePacket.getIsSuccess())
+        {
+            System.out.println("Sent message complete");
+        }
+        serverHandler.close();
         /* update the message collection (inbox) */
         this.getInbox().setMessages(receivePacket.getInboxMessage());
+        return receivePacket.getIsSuccess();
     }
 
 
@@ -146,8 +177,11 @@ public class Client
      * */
     public void showInbox()
     {
-        System.out.println("INBOX\n");
-        this.updateInbox();
+        boolean bOk = updateInbox();
+        if (bOk)
+        {
+            System.out.println("Get messages success ..");
+        }
         if(this.getInbox().getMessagesAmount() == 0)
         {
             System.out.println("No such any message in the inbox.");

@@ -1,4 +1,3 @@
-
 /**
  * FileManager.java
  * directly contact with file system.
@@ -8,27 +7,30 @@
  * Pungtippimanchai (mai) 59070501060
  */
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Scanner;
 
 
 public class FileManager
 {
     /* Reader object to access the file */
-    // private BufferedReader reader = null;
-    private Scanner reader = null;
+    private BufferedReader reader = null;
     private BufferedWriter writer = null;
 
+    /**
+     * Create a text file in the filepath that user provide in the parameter.
+     * @param filepath Path of the file that will be create at.
+     * @return true if file was successfully created. Otherwise it will return false.
+     */
     public boolean create(String filepath)
     {
         File file = new File(filepath);
-        System.out.println("checking file at " + file.getAbsolutePath());
+        System.out.println("checking file at " + file.getPath());
         boolean bOk;
         try
         {
@@ -46,41 +48,72 @@ public class FileManager
     }
 
     /**
-     * Open a text file, if possible. It will be closed when we open a new file, or
-     * get to the end of the old one.
+     * Create the directory that not exist from the parameter
+     * @param dir path that want to create the directory
+     * @return true if directory is created successfully, otherwise false.
+     */
+    public boolean createDir(String dir)
+    {
+        return (new File(dir)).mkdirs();
+    }
+
+    /**
+     * Open a text file for read, if possible. It will be closed when we open a new
+     * file, or get to the end of the old one.
      *
      * @param filename File to open
      * @return true if successfully opened, false if not found.
-     * @throws IOException
      */
-    public boolean open(String filename) throws IOException
+    public boolean openRead(String filename)
     {
-
         boolean bOk = true;
-        System.out.println("Try opening a file at " + filename);
         try
         {
             if (reader != null)
                 reader.close();
-            if (writer != null)
-                writer.close();
         }
         catch (IOException io)
         {
             reader = null;
-            writer = null;
         }
         try
         {
-            // reader = new BufferedReader(new FileReader(filename));
-            reader = new Scanner(new File(filename));
-            writer = new BufferedWriter(new FileWriter(filename));
-            System.out.println("Open file successfully ..");
+            reader = new BufferedReader(new FileReader(filename));
         }
         catch (FileNotFoundException fnf)
         {
             bOk = false;
             reader = null;
+        }
+        return bOk;
+    }
+
+    /**
+     * Open a text file for write, if possible. It will be closed when we open a new
+     * file, or get to the end of the old one.
+     *
+     * @param filename File to open
+     * @return true if successfully opened, false if not found.
+     */
+    public boolean openWrite(String filename)
+    {
+        boolean bOk = true;
+        try
+        {
+            if (writer != null)
+                writer.close();
+        }
+        catch (IOException io)
+        {
+            writer = null;
+        }
+        try
+        {
+            writer = new BufferedWriter(new FileWriter(filename, true));
+        }
+        catch (IOException ioe)
+        {
+            bOk = false;
             writer = null;
         }
         return bOk;
@@ -93,58 +126,49 @@ public class FileManager
      */
     public String getNextLine()
     {
-        String lineRead = null;
-        System.out.println("Reading the file ..");
-        if (reader != null) /* if reader is null, file is not open */
+        String lineReader = null;
+        try
         {
-            try
+            if (reader != null) /* if reader is null, file is not open */
             {
-                // System.out.println("reader : " + reader.hasNextLine());
-                if (reader.hasNextLine())
-                {
-                    lineRead = reader.nextLine();
-                }
-                System.out.println("lineRead : " + lineRead);
-                if (lineRead == null) /* end of the file */
+                lineReader = reader.readLine();
+                if (lineReader == null) /* end of the file */
                 {
                     reader.close();
                 }
-            }
-            catch (Exception e)
-            {
-                System.out.println(e);
-            }
+            } /* end if reader not null */
         }
-        /* end if reader not null */
-        System.out.println("Reading successful ..");
-        return lineRead;
+        catch (IOException ioe)
+        {
+            lineReader = null;
+        }
+        return lineReader;
     }
 
     /**
-     * Try to write a line from the open file.
+     * Try to wirte a line to the open file.
      *
-     * @param text text want to write to file
-     * @return write success flag
+     * @param data Data to write in to file.
+     * @return Line as a string, or null if an error occurred.
      */
-    public boolean setNextLine(String text)
+    public boolean writeNextLine(String data)
     {
-        boolean writeSuccess = true;
+        boolean success = true;
         try
         {
-            /* if reader is null, file is not open */
-            if (writer != null)
+            if (writer != null) /* if writer is null, file is not open */
             {
-                writer.write(text);
+                writer.append(data);
                 writer.newLine();
-                writeSuccess = true;
             }
         }
         catch (IOException ioe)
         {
-            writeSuccess = false;
+            success = false;
         }
-        return writeSuccess;
+        return success;
     }
+
 
     public boolean delete(String filepath)
     {
@@ -166,17 +190,29 @@ public class FileManager
     /**
      * Explicitly close the reader to free resources
      */
-    public void close()
+    public void closeRead()
     {
         try
         {
             reader.close();
+        }
+        catch (IOException ioe)
+        {
+
+        }
+    }
+
+    /**
+     * Explicitly close the writer to free resources
+     */
+    public void closeWrite()
+    {
+        try
+        {
             writer.close();
         }
         catch (IOException ioe)
         {
-            System.out.println(ioe);
         }
     }
-
 }

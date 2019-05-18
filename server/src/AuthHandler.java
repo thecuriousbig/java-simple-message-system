@@ -1,5 +1,3 @@
-import java.io.IOException;
-
 /**
  * AuthHandler.java Handle operation like register login
  *
@@ -20,15 +18,8 @@ public class AuthHandler
         FileManager fileManager = new FileManager();
         boolean isAlreadyExist = false;
         boolean isLoginSuccess;
-        /* Check if there is this client's information in database */
-        try
-        {
-            isAlreadyExist = fileManager.open("C:/Users/USER/Desktop/EmailJavaProject/database/user/" + username + ".txt");
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        String namePath = "C:/Users/USER/Desktop/EmailJavaProject/database/user/" + username + ".txt";
+        isAlreadyExist = fileManager.openRead(namePath);
         /* If there is a file */
         if (isAlreadyExist)
         {
@@ -40,7 +31,7 @@ public class AuthHandler
             else
                 System.out.println("Password not matched !!");
             /* close the file */
-            fileManager.close();
+            fileManager.closeRead();
         }
         else
             /* login failed because this client are not register yet */
@@ -57,27 +48,27 @@ public class AuthHandler
     {
         FileManager fileManager = new FileManager();
         boolean bOk = false;
-        String path = "C:/Users/USER/Desktop/EmailJavaProject/database/user/" + username + ".txt";
+
+        fileManager.createDir("../../database/user/");
+        fileManager.createDir("../../database/inbox/");
+
+        String namePath = "../../database/user/" + username + ".txt";
 
         /* create a file */
-        bOk = fileManager.create(path);
+        bOk = fileManager.create(namePath);
 
         if (!bOk)
             return false;
-        try
-        {
-            /* open */
-            bOk = fileManager.open(path);
-            if (bOk)
-                /*write a password */
-                bOk = fileManager.setNextLine(password);
-            /* close */
-            fileManager.close();
-        }
-        catch (IOException e)
-        {
-            bOk = false;
-        }
+        /* open */
+        bOk = fileManager.openWrite(namePath);
+        /* write a password */
+        if (bOk)
+            bOk = fileManager.writeNextLine(password);
+        /* close */
+        fileManager.closeWrite();
+
+        /* Create message path for this client */
+        bOk = fileManager.createDir("../../database/inbox/"+username);
 
         return bOk;
     }

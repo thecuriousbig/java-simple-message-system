@@ -9,23 +9,11 @@
 public class Authentication
 {
 
-    public static boolean login()
+    public static boolean login(String username, String password)
     {
         //Clear screen
         // System.out.print("\033[H\033[2J");
         // System.out.flush();
-
-        System.out.println("------------------Login------------------");
-        System.out.print("Enter username (No special character) : ");
-        String username = null;
-        do
-        {
-            username = IOUtils.getBareString();
-        }
-        while (IOUtils.getSpecialCharacterCount(username) > 0);
-
-        String password = IOUtils.getString("Enter password : ");
-
         ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
         Packet packet = new Packet().setCommand("login").setUsername(username).setPassword(password);
 
@@ -47,34 +35,15 @@ public class Authentication
 
         /* wait for server response back */
         Packet receivePacket = serverHandler.receive();
-        // serverHandler.close();
+        serverHandler.close();
         return receivePacket.getIsSuccess();
     }
 
-    public static boolean register()
+    public static boolean register(String username, String password)
     {
         // System.out.print("\033[H\033[2J");
         //Clear screen
-        System.out.flush();
-
-        System.out.println("---------------Register----------------");
-        System.out.print("Enter username (No special character) : ");
-        String username = null;
-        do
-        {
-            username = IOUtils.getBareString();
-        }
-        while (IOUtils.getSpecialCharacterCount(username) > 0);
-
-        String password = IOUtils.getString("Enter password :");
-
-        String confirmPassword = IOUtils.getString("Confirm password : ");
-        while (!confirmPassword.equals(password))
-        {
-            System.out.println("Error password is not correct");
-            confirmPassword = IOUtils.getString("Confirm password : ");
-        }
-
+        // System.out.flush();
         ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
         Packet packet = new Packet().setCommand("register").setUsername(username).setPassword(password);
 

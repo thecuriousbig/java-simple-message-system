@@ -1,10 +1,13 @@
 import java.util.ArrayList;
 import java.io.Serializable;
 /**
- * Packet.java
- *
- * Datatype of our message system use when the client are about to send some
- * data or object to the server. And so are server.
+ * Datatype of information that use in this simpleMessageSystem program which have a lot of properties
+ * Such as command: command or request message that tells server what client want to do.
+ *         message: messages that ase sent along with the packet that have to do some operation such as sending, deleting, etc.
+ *         username: username of the client
+ *         password: password of the client
+ *         inboxMessage: Sometimes server sent the entire messages that client which is inboxMessage.
+ *         isSuccess: status flag that descrice how everythings in this request is alright.
  *
  * Created by Tanatorn Nateesanprasert (big) 59070501035 Manchuporn
  * Pungtippimanchai (mai) 59070501060
@@ -15,32 +18,30 @@ public class Packet implements Serializable
 {
 
     private static final long serialVersionUID = 1L;
-    private String command; /* command text that describe the action type of this packet */
+    private String command;                     /* command text that describe the action type of this packet */
     private Message message;                    /* message      message that are relate or invoke in this packet */
     private String username;                    /* username     client that send this packet or do this operation */
     private String password;                    /* password     password of the client */
     private ArrayList<Message> inboxMessage;    /* inboxMessage list of message in client's inbox */
     private boolean isSuccess;                  /* isSuccess    success flag of the operation */
 
-
-    public Packet() {
-	}
-
 	/**
-     * Get the command
+     * Get the command that sent along with this packet
      *
      * @return string that describe the action type
      */
-    public String getCommand() {
+    public String getCommand()
+    {
         return this.command;
     }
 
     /**
-     * Set the command
+     * Set the command's value.
      *
      * @param command command that want to be set
      */
-    public Packet setCommand(String command) {
+    public Packet setCommand(String command)
+    {
         this.command = command;
         return this;
     }
@@ -50,7 +51,8 @@ public class Packet implements Serializable
      *
      * @return message
      */
-    public Message getMessage() {
+    public Message getMessage()
+    {
         return this.message;
     }
 
@@ -59,70 +61,98 @@ public class Packet implements Serializable
      *
      * @param message message of some client that will send to other
      */
-    public Packet setMessage(Message message) {
+    public Packet setMessage(Message message)
+    {
         this.message = message;
         return this;
     }
 
     /**
-     * Get the client
+     * Set the client's username
      *
-     * @return client instance
+     * @param username
      */
-    public String getUsername() {
+    public String getUsername()
+    {
         return this.username;
     }
 
     /**
-     * Set the client
+     * Set the client's username
      *
-     * @param client
+     * @return username of this client
      */
-    public Packet setUsername(String username) {
+    public Packet setUsername(String username)
+    {
         this.username = username;
         return this;
     }
 
     /**
-     * get the path
+     * get the password of the client
      *
-     * @return path that point to storage
+     * @return password of the client
      */
-    public String getPassword() {
+    public String getPassword()
+    {
         return this.password;
     }
 
     /**
-     * Set the path
+     * Set the password of the client
      *
-     * @param path
+     * @param password password of the client
      */
-    public Packet setPassword(String password) {
+    public Packet setPassword(String password)
+    {
         this.password = password;
         return this;
     }
 
-    public ArrayList<Message> getInboxMessage() {
+    /**
+     * Get the inbox messages
+     * @return inbox messages
+     */
+    public ArrayList<Message> getInboxMessage()
+    {
         return this.inboxMessage;
     }
 
+    /**
+     * Set the inbox messages's value
+     * @param inboxMessage inboxMessage that server sent to client
+     */
     public Packet setInboxMessage(ArrayList<Message> inboxMessage) {
         this.inboxMessage = inboxMessage;
         return this;
     }
 
+    /**
+     * get the status flag that describe the status of this operation
+     * @return true if everythings is alright
+     *         false if somethins want wrong
+     */
     public boolean getIsSuccess() {
         return this.isSuccess;
     }
 
+    /**
+     * Set the status flag
+     * @param isSuccess
+     * @return
+     */
     public Packet setIsSuccess(boolean isSuccess) {
         this.isSuccess = isSuccess;
         return this;
     }
 
+    /**
+     * Method to print all the information that this packet have
+     * @return string that show all member data.
+     */
     @Override
     public String toString()
     {
-        return "Packet {\ncommand:" + this.getCommand() + "\nmessage:" + this.getMessage() + "\nusername:" + this.getUsername() + "\npassword:" + this.getPassword() + "\n}";
+        return "Packet {command:" + command + ", message:" + message + ", username:" + username + ", password:" + password + "}";
     }
 }

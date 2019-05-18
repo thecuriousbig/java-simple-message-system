@@ -2,10 +2,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.io.Serializable;
 
-public class Message
+public class Message implements Serializable
 {
-    /** Date and time when first created*/
+
+    private static final long serialVersionUID = 1L;
+
+    /** Date and time when first created */
     private Date createdDate;
 
     /** Data and time when depart the message*/
@@ -34,8 +38,9 @@ public class Message
      * */
     public Message()
     {
-        this.dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        this.createdDate = new Date();
+        this.dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        this.setCreatedDate(new Date());
+        this.replyMessages = new ArrayList<Message>();
     }
 
     /**
@@ -154,6 +159,12 @@ public class Message
         return this;
     }
 
+    public Message initialDeliverDate()
+    {
+        this.deliverDate = new Date();
+        return this;
+    }
+
     public Message setDeliverDate(Date deliverDate)
     {
         this.deliverDate = deliverDate;
@@ -168,25 +179,36 @@ public class Message
         System.out.println("-------------------------------------------------");
         System.out.println("[Message created at " + this.createdDate + "]");
         System.out.println("-------------------------------------------------");
-        System.out.println("SUBJECT:    " + this.getSubject());
-        System.out.println("FROM:    " + this.getFromAddress());
-        System.out.println("TO:    " + this.getToAddress());
+        System.out.println("SUBJECT: " + this.subject);
+        System.out.println("FROM:    " + this.from);
+        System.out.println("TO:      " + this.to);
         System.out.println("-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -");
-        System.out.println(this.getBodyMessage());
+        System.out.println(this.bodyMessage);
         System.out.println("-------------------------------------------------");
-        System.out.println("[Message sent at " + this.getDeliverDate() + "]");
+        System.out.println("[Message sent at " + this.deliverDate + "]");
         System.out.println("-------------------------------------------------");
-        for (Message msg : this.getReplyMessages())
+        for (Message msg : this.replyMessages)
         {
             System.out.println(".................................................");
-            System.out.println("SUBJECT    " + msg.getBodyMessage());
-            System.out.println("FROM:    " + msg.getFromAddress());
-            System.out.println("TO:    " + msg.getToAddress());
+            System.out.println("SUBJECT: " + msg.subject);
+            System.out.println("FROM:    " + msg.from);
+            System.out.println("TO:      " + msg.to);
             System.out.println("-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -");
-            System.out.println(msg.getBodyMessage());
+            System.out.println(msg.bodyMessage);
             System.out.println(".................................................");
-            System.out.println("[Reply sent at " + msg.getDeliverDate() + "]");
+            System.out.println("[Reply sent at " + msg.deliverDate + "]");
             System.out.println(".................................................");
         }
+    }
+
+        /**
+     * Show information of this message
+     */
+    @Override
+    public String toString()
+    {
+        return "\nMessage subject: " + subject + "\ncreated date: " + createdDate + "\ndeliver date: " + deliverDate
+               + "\ntoAddress: " + to + "\nfromAddress: " + from + "\nbodyMessage: " + bodyMessage
+               + "Reply (" + replyMessages.size() + ")\n";
     }
 }

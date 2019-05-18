@@ -6,30 +6,29 @@
  * Created by Tanatorn Nateesanprasert (big) 59070501035 Manchuporn
  * Pungtippimanchai (mai) 59070501060
  */
-public class ClientSystem {
+public class ClientSystem
+{
     /* Flag check that user is currently logged in or not */
     private static boolean isUserLogin = false;
     /* client object will initialize after user is logged in */
     private static Client client = null;
 
     /**
-     * Constructor of ClientSystem
-     */
-    ClientSystem() {
-
-    }
-
-    /**
      * showMenu
      *
      * show menu of main program
      */
-    public static boolean showMenu() {
+    public static boolean showMenu()
+    {
         String userInput;
+        String username;
+        String password;
+        String confirmPassword;
         boolean isExit = false;
         boolean registerFlag;
 
-        if (isUserLogin) {
+        if (isUserLogin)
+        {
 
             System.out.println("                    Main Menu                   ");
             System.out.println("================================================");
@@ -41,15 +40,18 @@ public class ClientSystem {
             {
                 case "1":
                     client.createMessage();
-
+                    break;
                 case "2":
                     client.showInbox();
-
+                    break;
                 case "3":
                     isUserLogin = !(Authentication.logout(client));
+                    break;
             }
 
-        } else {
+        }
+        else
+        {
 
             System.out.println("          BMTeam Simple Message System          ");
             System.out.println("================================================");
@@ -60,24 +62,61 @@ public class ClientSystem {
             switch (userInput) {
 
             case "1":
-                isUserLogin = Authentication.login();
+                System.out.println("------------------Login------------------");
+                // System.out.print("Enter username (No special character) : ");
+                username = null;
+                do
+                {
+                    /* user enter username */
+                    username = IOUtils.getString("Enter username (No special character) : ");
+                }
+                while (IOUtils.getSpecialCharacterCount(username) > 0);
+                /* user enter password */
+                password = IOUtils.getString("Enter password : ");
+
+                isUserLogin = Authentication.login(username, password);
                 if (isUserLogin)
                 {
                     System.out.println("Login success !!");
                     System.out.println("Entering the program ..");
+                    client = new Client(username, password);
+
                 }
                 else
                     System.out.println("Login failed! Please try again");
                 try
                 {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     System.out.println(e);
                 }
                 break;
 
             case "2":
-                registerFlag = Authentication.register();
+                System.out.println("---------------Register----------------");
+                // System.out.print("Enter username (No special character) : ");
+                username = null;
+                do
+                {
+                    /* user enter username */
+                    username = IOUtils.getString("Enter username (No special character) : ");
+                }
+                while (IOUtils.getSpecialCharacterCount(username) > 0);
+                /* user enter password */
+                password = IOUtils.getString("Enter password :");
+                /* user enter confirm password */
+                confirmPassword = IOUtils.getString("Confirm password : ");
+
+                while (!confirmPassword.equals(password))
+                {
+                    System.out.println("Error password is not correct");
+                    confirmPassword = IOUtils.getString("Confirm password : ");
+                }
+
+                /* Call the register method */
+                registerFlag = Authentication.register(username, password);
                 if (registerFlag)
                 {
                     System.out.println("Register success !!");
@@ -85,22 +124,37 @@ public class ClientSystem {
                 }
                 else
                     System.out.println("Register failed! Please try again.");
-                try {
+                try
+                {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     System.out.println(e);
                 }
                 break;
 
             case "3":
                 isExit = true;
+                System.out.println("Logging out ..");
+                try
+                {
+                    Thread.sleep(1000);
+                }
+                catch (Exception e)
+                {
+                    System.out.println(e);
+                }
                 break;
 
             default:
                 System.out.println("Wrong input. Please try again.");
-                try {
+                try
+                {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     System.out.println(e);
                 }
                 break;
@@ -112,16 +166,17 @@ public class ClientSystem {
 
     /**
      * main fucntion
-     *
      * Everything begins here
-     *
      * @param args[] array of input argument
      */
-    public static void main(String args[]) {
+    public static void main(String args[])
+    {
         boolean isExit;
-        do {
+        do
+        {
             isExit = showMenu();
-        } while (!isExit);
+        }
+        while (!isExit);
         System.out.println("Exit program!");
         System.exit(0);
     }

@@ -1,30 +1,40 @@
-
 public class Editor
 {
 
     public static void createMessage(String username)
     {
-        Message msg = new Message();
-        String to = IOUtils.getString("==> Enter To email address");
-        Editor.setMessageToAddress(msg, to);
-        String from = IOUtils.getString("==> Enter From email address");
-        Editor.setMessageFromAddress(msg, from);
-        String subject = IOUtils.getString("==> Enter email subject");
-        Editor.setMessageSubject(msg, subject);
+        String to = IOUtils.getString("==> Enter Recipient email address : ");
+        // Editor.setMessageToAddress(msg, to);
+        String from = username;
+        // Editor.setMessageFromAddress(msg, from);
+        String subject = IOUtils.getString("==> Enter email subject : ");
+        // Editor.setMessageSubject(msg, subject);
         System.out.println("==> Enter message text below. Type END to  finish.");
-        String body = null;
-        while (true) {
-            String line = IOUtils.getBareString();
-            if (line.compareTo("END\r") == 0)
-                break;
-
-            Editor.addBody(body, line);
-        }
-        Editor.setMessageBody(msg, body);
-        msg.showMessage();
-        String response = IOUtils.getString("\nSend the message ? [yes/no] ");
-        if (response.equalsIgnoreCase("yes"))
+        String body = "";
+        while (true)
         {
+            String line = IOUtils.getBareString();
+            if (line.compareTo("END") == 0)
+                break;
+            body = body + line + "\n";
+        }
+        System.out.println("-------------------------------------------------");
+        System.out.println("                 Created Message                 ");
+        System.out.println("-------------------------------------------------");
+        System.out.println("SUBJECT: " + subject);
+        System.out.println("FROM:    " + from);
+        System.out.println("TO:      " + to);
+        System.out.println("-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -");
+        System.out.println(body);
+        System.out.println("-------------------------------------------------");
+        System.out.println("\nSend the message  ?");
+        System.out.println("===================");
+        System.out.println("1. Send the message");
+        System.out.println("2. Cancel");
+        String response = IOUtils.getString("Enter answer > ");
+        if (response.equalsIgnoreCase("1"))
+        {
+            Message msg = new Message().setFromAddress(from).setToAddress(to).setSubject(subject).setBodyMessage(body);
             Editor.sendMessage(msg, to);
         }
     }
@@ -49,36 +59,42 @@ public class Editor
         msg.setBodyMessage(body);
     }
 
-    /**
-     * Method to add a message to an email.
-     *
-     * @param message
-     */
-    public static void addBody(String body, String line)
-    {
-        if (body.length() > 0)
-            body += '\n' + line;
-        else
-            body = line;
-    }
-
     public static boolean sendMessage(Message msg, String to)
     {
         ServerHandler serverHandler =  new ServerHandler("127.0.0.1", 8080);
-        Packet packet = new Packet().setCommand("sendMessage").setUsername(to);
+        Packet packet = new Packet().setCommand("sendMessage").setUsername(to).setMessage(msg.initialDeliverDate());
 
         /* connect to server */
         boolean isConnect = serverHandler.connect();
-        if (!isConnect) {
+        if (!isConnect)
+        {
             System.out.println("cannot connect to server!");
             return false;
         }
 
+        System.out.println("sending .. ");
+        try
+        {
+            Thread.sleep(2000);
+        }
+        catch (Exception e)
+        {
+        }
         /* send the message */
-        serverHandler.send(packet);
+        boolean bOk = serverHandler.send(packet);
+        if (bOk)
+        {
+            System.out.println("waiting for response ..");
+        }
 
         Packet receivePacket = serverHandler.receive();
+        /* if sent message successful */
+        if (receivePacket.getIsSuccess())
+        {
+            System.out.println("Sent message complete");
+        }
         serverHandler.close();
+        msg.showMessage();
         return receivePacket.getIsSuccess();
     }
 
@@ -109,12 +125,14 @@ public class Editor
         {
             Message reply = new Message().setToAddress(to).setFromAddress(from).setSubject("RE:" + msg.getSubject());
             msg.addReplyMessage(reply);
+
             ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
             Packet packet = new Packet().setCommand("replyMessage").setUsername(msg.getToAddress());
 
             /* connect to server */
             boolean isConnect = serverHandler.connect();
-            if (!isConnect) {
+            if (!isConnect)
+            {
                 System.out.println("cannot connect to server!");
                 return false;
             }
@@ -153,25 +171,23 @@ public class Editor
                 break;
             forwardMsg = forwardMsg + line + "\n";
         }
-        forwardMsg = forwardMsg + "\n\n----------------Forwarded message-----------------\n\n"+
-                msg.getBodyMessage();
+        forwardMsg = forwardMsg + "\n\n----------------Forwarded message-----------------\n\n"+ msg.getBodyMessage();
 
         while (true)
         {
             String decision = IOUtils.getString("Send[Y], Cancel[N]: ");
-            if(decision.equalsIgnoreCase("Y"))
+            if (decision.equalsIgnoreCase("Y"))
             {
                 Message newMsg = new Message().setToAddress(to).setFromAddress(from).setBodyMessage(forwardMsg).setSubject(subject);
                 sendMessage(newMsg, to);
                 return true;
             }
-            else if(decision.equalsIgnoreCase("N"))
+            else if (decision.equalsIgnoreCase("N"))
                 return false;
             else
             {
                 System.out.println("Error : Bad input");
             }
         }
-
     }
 }

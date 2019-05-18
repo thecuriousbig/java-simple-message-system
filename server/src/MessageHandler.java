@@ -1,6 +1,6 @@
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+
 
 /**
  * MessageHandler.java
@@ -18,22 +18,22 @@ public class MessageHandler
         boolean statusFlag = true;
         try
         {
-            fileManager.setNextLine(message.getSubject());
-            fileManager.setNextLine(message.getToAddress());
-            fileManager.setNextLine(message.getFromAddress());
-            fileManager.setNextLine(message.getBodyMessage());
-            fileManager.setNextLine(message.getDateFormat().format(message.getDeliverDate()));
+            fileManager.writeNextLine(message.getSubject());
+            fileManager.writeNextLine(message.getToAddress());
+            fileManager.writeNextLine(message.getFromAddress());
+            fileManager.writeNextLine(message.getBodyMessage());
+            fileManager.writeNextLine(message.getDateFormat().format(message.getDeliverDate()));
 
             int size = message.getReplyMessages().size();
 
-            fileManager.setNextLine(String.valueOf(size));
+            fileManager.writeNextLine(String.valueOf(size));
             message.getReplyMessages().forEach(replyMessage ->
             {
-                fileManager.setNextLine(replyMessage.getSubject());
-                fileManager.setNextLine(replyMessage.getToAddress());
-                fileManager.setNextLine(replyMessage.getFromAddress());
-                fileManager.setNextLine(replyMessage.getBodyMessage());
-                fileManager.setNextLine(message.getDateFormat().format(message.getDeliverDate()));
+                fileManager.writeNextLine(replyMessage.getSubject());
+                fileManager.writeNextLine(replyMessage.getToAddress());
+                fileManager.writeNextLine(replyMessage.getFromAddress());
+                fileManager.writeNextLine(replyMessage.getBodyMessage());
+                fileManager.writeNextLine(message.getDateFormat().format(message.getDeliverDate()));
             });
         }
         catch (Exception e)
@@ -44,26 +44,24 @@ public class MessageHandler
     }
 
     public static Message readFile(FileManager fileManager) {
-        Message message;
+        Message message = new Message();
+        int replySize = 0;
         try
         {
-            message = new Message(
-                fileManager.getNextLine(), /* Subject */
-                fileManager.getNextLine(), /* To Address */
-                fileManager.getNextLine(), /* From Address */
-                fileManager.getNextLine() /* BodyMessage */
-            );
-            message.setDeliverDate(message.getDateFormat().parse(fileManager.getNextLine()));
-            int replySize = Integer.valueOf(fileManager.getNextLine());
-            for (int i = 0; i < replySize; i++)
+            message.setSubject(fileManager.getNextLine())
+                    .setToAddress(fileManager.getNextLine())
+                    .setFromAddress(fileManager.getNextLine())
+                    .setBodyMessage(fileManager.getNextLine())
+                    .setDeliverDate(message.getDateFormat().parse(fileManager.getNextLine()));
+
+            replySize = Integer.valueOf(fileManager.getNextLine());
+            for (Message replyMessage : message.getReplyMessages())
             {
-                Message replyMessage = new Message(
-                    fileManager.getNextLine(),  /* Subject */
-                    fileManager.getNextLine(),  /* To Address */
-                    fileManager.getNextLine(),  /* From Address */
-                    fileManager.getNextLine()   /* BodyMessage */
-                );
-                replyMessage.setDeliverDate(replyMessage.getDateFormat().parse(fileManager.getNextLine()));
+                replyMessage.setSubject(fileManager.getNextLine())
+                            .setToAddress(fileManager.getNextLine())
+                            .setFromAddress(fileManager.getNextLine())
+                            .setBodyMessage(fileManager.getNextLine())
+                            .setDeliverDate(replyMessage.getDateFormat().parse(fileManager.getNextLine()));
                 message.addReplyMessage(replyMessage);
             }
         }
@@ -79,16 +77,19 @@ public class MessageHandler
      *
      * @param message message from client
      */
-    public static boolean send(Message message, String filepath)
+    public static boolean send(Message message, String username)
     {
         FileManager fileManager = new FileManager();
         boolean statusFlag = false;
+        System.out.println(message.getSubject());
+        String filepath = "../../database/inbox/"+username+"/"+message.getSubject()+".txt";
+        System.out.println(filepath);
         try
         {
             /* create a file */
             statusFlag = fileManager.create(filepath);
             /* open file */
-            statusFlag = fileManager.open(filepath);
+            statusFlag = fileManager.openWrite(filepath);
             if (statusFlag)
                 statusFlag = writeFile(message, fileManager);
         }
@@ -96,7 +97,7 @@ public class MessageHandler
         {
             statusFlag = false;
         }
-        fileManager.close();
+        fileManager.closeWrite();
         return statusFlag;
     }
 
@@ -113,26 +114,33 @@ public class MessageHandler
 
         try
         {
-            /* open file */
-            statusFlag = fileManager.open(filepath);
+            /* open file for reading */
+            statusFlag = fileManager.openRead(filepath);
             if (statusFlag)
             {
                 /* read a file first */
                 inboxMessage = readFile(fileManager);
+                /* Add reply message */
                 if (inboxMessage != null)
-                {
-                    /* Add reply message */
                     inboxMessage.addReplyMessage(message);
-                    /* Write to database again  */
-                    statusFlag = writeFile(inboxMessage, fileManager);
-                }
             }
+            /* Close read fike */
+            fileManager.closeRead();
+
+            /* Open file for writing */
+            statusFlag = fileManager.openWrite(filepath);
+            if (statusFlag)
+            {
+                /* Start write a file */
+                statusFlag = writeFile(inboxMessage, fileManager);
+            }
+            /* Close write file */
+            fileManager.closeWrite();
         }
-        catch (IOException ioe)
+        catch (Exception e)
         {
             statusFlag = false;
         }
-        fileManager.close();
         return statusFlag;
     }
 
@@ -167,9 +175,9 @@ public class MessageHandler
                 for (int i=0; i<messageNumber; i++)
                 {
                     /* Open file */
-                    fileManager.open(filesList[i].getPath());
+                    fileManager.openRead(filesList[i].getPath());
                     messages.add(readFile(fileManager));
-                    fileManager.close();
+                    fileManager.closeRead();
                 }
             }
         }
