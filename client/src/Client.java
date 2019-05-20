@@ -16,7 +16,7 @@ public class Client
     private String password;
 
     /* Inbox is a received message collection*/
-    private static MessageCollection inbox;
+    private MessageCollection inbox;
 
     /**
      *  Constructor of singleton class
@@ -25,6 +25,7 @@ public class Client
     {
         this.username = username;
         this.password = password;
+        this.inbox = new MessageCollection();
     }
 
     /**
@@ -95,8 +96,7 @@ public class Client
 
     /**
      *  forward a selected message
-     *  @return     true if forward successful,
-     *              false if cancel.
+     *  @param message message that are going to be forwarded by this client to other client
      * */
     public void forwardMessage(Message message)
     {
@@ -109,8 +109,7 @@ public class Client
     /**
      * reply a selected message
      *
-     * @return true if forward successful
-     *         false if cancel.
+     * @param message message that will have a reply message
      */
     public void replyMessage(Message message)
     {
@@ -121,6 +120,15 @@ public class Client
     }
 
     /**
+     * delete a selected message
+     *
+     * @param message message that want to be deleted or remove from the collection
+     */
+    public void deleteMessage(Message message)
+    {
+    }
+
+    /**
      * Update and fetch all the messages in the inbox
      */
     public boolean updateInbox()
@@ -128,7 +136,7 @@ public class Client
         /* Create serverHandler */
         ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
         /* Create a packet to send to the server */
-        Packet packet = new Packet().setCommand("getMessage").setUsername(this.username);
+        Packet packet = new Packet().setCommand("getMessage").setUsername(username);
         /* connect to server */
         boolean isConnect = serverHandler.connect();
         if (!isConnect)
@@ -158,6 +166,7 @@ public class Client
         catch (Exception e)
         {
         }
+
         Packet receivePacket = serverHandler.receive();
 
         /* if sent message successful */
@@ -182,37 +191,66 @@ public class Client
         {
             System.out.println("Get messages success ..");
         }
-        if(this.getInbox().getMessagesAmount() == 0)
+        if(inbox.getMessagesAmount() == 0)
         {
             System.out.println("No such any message in the inbox.");
         }
         else
         {
-            this.getInbox().showAllMessages();
-            System.out.println("-------------------------------------------");
-
+            inbox.showAllMessages();
             int index = -1;
 
             while (index == -1)
             {
-                index = IOUtils.getInteger("Select message by index [1-" + getInbox().getMessagesAmount()
-                        +" or 0 for no select] : ");
+                System.out.println("Select one message [1-"+inbox.getMessagesAmount()+"] (enter 0 for back to main menu)");
+                index = IOUtils.getInteger("Enter answer > ");
+                /* Get the \n that still in the system.in buffer */
+                IOUtils.getBareString();
             }
-            if (index > 0 && index < getInbox().getMessagesAmount())
+            if (index > 0 && (index-1 < inbox.getMessagesAmount()))
             {
-                Message selectedMsg = inbox.getMessages().get(index);
-                selectedMsg.showMessage();
-                String option = IOUtils.getString("\nSelect option \n [F]FORWARD \n [R]REPLY \n [N]NONE");
-                option = option.toUpperCase();
-                switch (option)
+                boolean notValid;
+                do
                 {
-                    case "F":
-                        this.forwardMessage(selectedMsg);
-                    case "R":
-                        this.replyMessage(selectedMsg);
-                    case "N":
-                        System.out.println("=============================================");
+                    notValid = false;
+                    /* Get the selected message from the message collection */
+                    Message selectedMsg = inbox.getOneMessage(index-1);
+                    /* show the detail of message */
+                    selectedMsg.showMessage();
+
+                    System.out.println("Select one operation below");
+                    System.out.println("1. Forward message");
+                    System.out.println("2. Reply message");
+                    System.out.println("3. Delete message");
+                    System.out.println("0. Back to menu");
+                    String option = IOUtils.getString("Enter answer > ");
+                    switch (option)
+                    {
+                        case "1":
+                            this.forwardMessage(selectedMsg);
+                            break;
+                        case "2":
+                            this.replyMessage(selectedMsg);
+                            break;
+                        case "3":
+                            this.deleteMessage(selectedMsg);
+                            break;
+                        case "0":
+                            System.out.println("Going back to main menu ..");
+                            try
+                            {
+                                Thread.sleep(1000);
+                            }
+                            catch (Exception e)
+                            {
+                            }
+                            break;
+                        default:
+                            notValid = true;
+                            break;
+                    }
                 }
+                while (notValid);
             }
         }
     }

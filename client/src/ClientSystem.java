@@ -46,6 +46,13 @@ public class ClientSystem
                     break;
                 case "3":
                     isUserLogin = !(Authentication.logout(client));
+                    try
+                    {
+                        Thread.sleep(1000);
+                    }
+                    catch (Exception e)
+                    {
+                    }
                     break;
             }
 
@@ -53,8 +60,8 @@ public class ClientSystem
         else
         {
 
-            System.out.println("          BMTeam Simple Message System          ");
-            System.out.println("================================================");
+            System.out.println("           BMTeam Simple Message System          ");
+            System.out.println("=================================================");
             System.out.println("1. Login");
             System.out.println("2. Register");
             System.out.println("3. Exit");

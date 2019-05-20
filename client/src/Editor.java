@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Editor
 {
 
@@ -10,13 +12,24 @@ public class Editor
         String subject = IOUtils.getString("==> Enter email subject : ");
         // Editor.setMessageSubject(msg, subject);
         System.out.println("==> Enter message text below. Type END to  finish.");
+        ArrayList<String> line = new ArrayList<>();
         String body = "";
+        int i=0;
         while (true)
         {
-            String line = IOUtils.getBareString();
-            if (line.compareTo("END") == 0)
+            line.add(IOUtils.getBareString());
+            if (line.get(i).compareTo("END") == 0)
+            {
+                for (int j=0;j<i;j++)
+                {
+                    if (j == i-1)
+                        body += line.get(j);
+                    else
+                        body += line.get(j)+"\n";
+                }
                 break;
-            body = body + line + "\n";
+            }
+            i++;
         }
         System.out.println("-------------------------------------------------");
         System.out.println("                 Created Message                 ");
@@ -111,83 +124,137 @@ public class Editor
         {
             to = msg.getFromAddress();
         }
-        System.out.println("Enter your reply message : ");
+        System.out.println("==> Enter Forward message below. Type END to  finish.");
+        ArrayList<String> line = new ArrayList<>();
+        int i=0;
         while (true)
         {
-            String line = IOUtils.getBareString();
-            if (line.compareTo("END") == 0)
-                break;
-            replyMsg = replyMsg + line + "\n";
-        }
-
-        String decision = IOUtils.getString("Send[Y], Cancel[N]: ");
-        if(decision.equalsIgnoreCase("Y"))
-        {
-            Message reply = new Message().setToAddress(to).setFromAddress(from).setSubject("RE:" + msg.getSubject());
-            msg.addReplyMessage(reply);
-
-            ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
-            Packet packet = new Packet().setCommand("replyMessage").setUsername(msg.getToAddress());
-
-            /* connect to server */
-            boolean isConnect = serverHandler.connect();
-            if (!isConnect)
+            line.add(IOUtils.getBareString());
+            if (line.get(i).compareTo("END") == 0)
             {
-                System.out.println("cannot connect to server!");
-                return false;
+                for (int j=0;j<i;j++)
+                    if (j != i-1)
+                        replyMsg += line.get(j)+"\n";
+                    else
+                        replyMsg += line.get(j);
+                break;
             }
-
-            /* send reply message */
-            serverHandler.send(packet);
-
-            Packet receivePacket = serverHandler.receive();
-            serverHandler.close();
-            return receivePacket.getIsSuccess();
+            i++;
         }
-        else if(decision.equalsIgnoreCase("N"))
+        boolean notValid;
+        boolean bOk = true;
+        do
         {
-            System.out.println("cancel operation!");
-            return false;
+            notValid = false;
+            System.out.println("\nReply the message  ?");
+            System.out.println("===================");
+            System.out.println("1. Reply the message");
+            System.out.println("2. Cancel");
+            String response = IOUtils.getString("Enter answer > ");
+            if(response.compareTo("1") == 0)
+            {
+                /* Create new reply message */
+                Message reply = new Message().setToAddress(to).setFromAddress(from).setSubject("[RE]" + msg.getSubject()).setBodyMessage(replyMsg);
+                /* Add this reply message to the original message */
+                msg.addReplyMessage(reply);
+
+                ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
+                Packet packet = new Packet().setCommand("replyMessage").setUsername(msg.getToAddress());
+
+                /* connect to server */
+                boolean isConnect = serverHandler.connect();
+                if (!isConnect)
+                {
+                    System.out.println("cannot connect to server!");
+                    return false;
+                }
+
+                /* send reply message */
+                serverHandler.send(packet);
+                /* wait for the server to response */
+                Packet receivePacket = serverHandler.receive();
+                /* Close the connection socket */
+                serverHandler.close();
+
+                bOk = receivePacket.getIsSuccess();
+            }
+            else if(response.compareTo("2") == 0)
+            {
+                System.out.println("Going back to menu !!");
+                try
+                {
+                    Thread.sleep(1000);
+                }
+                catch (Exception e)
+                {
+                }
+
+                bOk = false;
+            }
+            else
+            {
+                System.out.println("Invalid input !!");
+                try
+                {
+                    Thread.sleep(1000);
+                } catch (Exception e)
+                {
+                }
+                notValid = true;
+            }
         }
-        else
-        {
-            System.out.println("Error : Bad input");
-            return false;
-        }
+        while (notValid);
+        return bOk;
     }
 
     public static boolean createForwardMessage(Message msg, String username)
     {
-        String forwardMsg = "";
-        String to = "";
-        String subject = "[FWD]" + msg.getSubject();
+        String subject = "";
+        if (!msg.getSubject().startsWith("[FWD]"))
+            subject = msg.getSubject();
+        else
+            subject = "[FWD]"+msg.getSubject();
         String from = username;
-        to = IOUtils.getString("Forward to : ");
-        System.out.println("Enter your reply message : ");
+        String to = IOUtils.getString("==> Forward message to : ");
+        System.out.println("==> Enter Forward message below. Type END to  finish.");
+        ArrayList<String> line = new ArrayList<>();
+        String forwardMsg = "";
+        int i=0;
         while (true)
         {
-            String line = IOUtils.getBareString();
-            if (line.compareTo("END") == 0)
+            line.add(IOUtils.getBareString());
+            if (line.get(i).compareTo("END") == 0)
+            {
+                for (int j=0;j<i;j++)
+                     forwardMsg += line.get(j)+"\n";
                 break;
-            forwardMsg = forwardMsg + line + "\n";
+            }
+            i++;
         }
-        forwardMsg = forwardMsg + "\n\n----------------Forwarded message-----------------\n\n"+ msg.getBodyMessage();
+        forwardMsg += "--------Forwarded message--------\n";
+        forwardMsg += "From: "+msg.getFromAddress()+"\n";
+        forwardMsg += "Date: "+msg.getDeliverDate().toString()+"\n";
+        forwardMsg += "Subject: "+msg.getSubject()+"\n";
+        forwardMsg += "To: "+msg.getToAddress()+"\n";
+        forwardMsg += msg.getBodyMessage();
 
         while (true)
         {
-            String decision = IOUtils.getString("Send[Y], Cancel[N]: ");
-            if (decision.equalsIgnoreCase("Y"))
+            System.out.println("\nForward the message  ?");
+            System.out.println("===================");
+            System.out.println("1. Forward the message");
+            System.out.println("2. Cancel");
+            String response = IOUtils.getString("Enter answer > ");
+            if (response.compareTo("1") == 0)
             {
                 Message newMsg = new Message().setToAddress(to).setFromAddress(from).setBodyMessage(forwardMsg).setSubject(subject);
                 sendMessage(newMsg, to);
                 return true;
             }
-            else if (decision.equalsIgnoreCase("N"))
+            else if (response.compareTo("2") == 0)
                 return false;
             else
-            {
                 System.out.println("Error : Bad input");
-            }
         }
     }
 }

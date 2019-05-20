@@ -22,19 +22,25 @@ public class MessageHandler
             fileManager.writeNextLine(message.getToAddress());
             fileManager.writeNextLine(message.getFromAddress());
             fileManager.writeNextLine(message.getBodyMessage());
+            fileManager.writeNextLine("---");
             fileManager.writeNextLine(message.getDateFormat().format(message.getDeliverDate()));
 
             int size = message.getReplyMessages().size();
 
             fileManager.writeNextLine(String.valueOf(size));
-            message.getReplyMessages().forEach(replyMessage ->
+            /* If there is a reply message then write it to the file */
+            if (size != 0)
             {
-                fileManager.writeNextLine(replyMessage.getSubject());
-                fileManager.writeNextLine(replyMessage.getToAddress());
-                fileManager.writeNextLine(replyMessage.getFromAddress());
-                fileManager.writeNextLine(replyMessage.getBodyMessage());
-                fileManager.writeNextLine(message.getDateFormat().format(message.getDeliverDate()));
-            });
+                message.getReplyMessages().forEach(replyMessage ->
+                {
+                    fileManager.writeNextLine(replyMessage.getSubject());
+                    fileManager.writeNextLine(replyMessage.getToAddress());
+                    fileManager.writeNextLine(replyMessage.getFromAddress());
+                    fileManager.writeNextLine(replyMessage.getBodyMessage());
+                    fileManager.writeNextLine("---");
+                    fileManager.writeNextLine(message.getDateFormat().format(message.getDeliverDate()));
+                });
+            }
         }
         catch (Exception e)
         {
@@ -45,24 +51,73 @@ public class MessageHandler
 
     public static Message readFile(FileManager fileManager) {
         Message message = new Message();
+        String body = "";
+
         int replySize = 0;
         try
         {
             message.setSubject(fileManager.getNextLine())
                     .setToAddress(fileManager.getNextLine())
-                    .setFromAddress(fileManager.getNextLine())
-                    .setBodyMessage(fileManager.getNextLine())
-                    .setDeliverDate(message.getDateFormat().parse(fileManager.getNextLine()));
+                    .setFromAddress(fileManager.getNextLine());
+            /* Read the bodyMessage */
+            int i = 0;
+            ArrayList<String> line = new ArrayList<>();
+            while (true) {
+                line.add(fileManager.getNextLine());
+                if (line.get(i).compareTo("---") == 0) {
+                    for (int j = 0; j < i; j++)
+                    {
+                        if (j == i - 1)
+                            body += line.get(j);
+                        else
+                            body += line.get(j) + "\n";
+                    }
+                    break;
+                }
+                i++;
+            }
+            message.setBodyMessage(body)
+                   .setDeliverDate(message.getDateFormat().parse(fileManager.getNextLine()));
 
             replySize = Integer.valueOf(fileManager.getNextLine());
-            for (Message replyMessage : message.getReplyMessages())
+            if (replySize != 0)
             {
-                replyMessage.setSubject(fileManager.getNextLine())
-                            .setToAddress(fileManager.getNextLine())
-                            .setFromAddress(fileManager.getNextLine())
-                            .setBodyMessage(fileManager.getNextLine())
-                            .setDeliverDate(replyMessage.getDateFormat().parse(fileManager.getNextLine()));
-                message.addReplyMessage(replyMessage);
+                for (Message replyMessage : message.getReplyMessages())
+                {
+                    replyMessage.setSubject(fileManager.getNextLine())
+                                .setToAddress(fileManager.getNextLine())
+                                .setFromAddress(fileManager.getNextLine());
+                    /* read the bodyMessage of replyMessage */
+                    i = 0;
+                    ArrayList<String> replyLine = new ArrayList<>();
+                    while (true)
+                    {
+                        replyLine.add(fileManager.getNextLine());
+                        if (replyLine.get(i).compareTo("---") == 0)
+                        {
+                            for (int j = 0; j < i; j++)
+                            {
+                                if (j == i - 1)
+                                    body += line.get(j);
+                                else
+                                    body += line.get(j) + "\n";
+                            }
+                            break;
+                        }
+                        i++;
+                    }
+                    // while (true)
+                    // {
+                    //     line = fileManager.getNextLine();
+                    //     if (line.compareTo("---") == 0)
+                    //         break;
+                    //     body += line + "\n";
+                    // }
+                    replyMessage.setBodyMessage(fileManager.getNextLine())
+                                .setDeliverDate(replyMessage.getDateFormat().parse(fileManager.getNextLine()));
+                    /* Add the replyMessage to the list one by one */
+                    message.addReplyMessage(replyMessage);
+                }
             }
         }
         catch (Exception e)
@@ -106,8 +161,9 @@ public class MessageHandler
      *
      * @param message message from client
      */
-    public static boolean reply(Message message, String filepath)
+    public static boolean reply(Message message, String username)
     {
+        String filepath = "../../database/inbox/"+username+"/"+message.getSubject()+".txt";
         FileManager fileManager = new FileManager();
         Message inboxMessage = null;
         boolean statusFlag = false;
@@ -159,9 +215,10 @@ public class MessageHandler
      * handle get the message operation
      *
      */
-    public static ArrayList<Message> getMessage(String filepath)
+    public static ArrayList<Message> getMessage(String username)
     {
         int messageNumber;
+        String filepath = "../../database/inbox/"+username;
         ArrayList<Message> messages = new ArrayList<>();
         FileManager fileManager = new FileManager();
         final File folder = new File(filepath);
@@ -174,6 +231,7 @@ public class MessageHandler
                 messageNumber = filesList.length;
                 for (int i=0; i<messageNumber; i++)
                 {
+                    System.out.println("file " + i + ": " + filesList[i].getPath());
                     /* Open file */
                     fileManager.openRead(filesList[i].getPath());
                     messages.add(readFile(fileManager));
