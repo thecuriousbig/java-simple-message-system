@@ -134,8 +134,8 @@ public class Message implements Serializable
 
     /**
      * Get the body message of this message
-     *
-     * @return body message
+     * @param bodyMessage body of the message
+     * @return message itself
      */
     public Message setBodyMessage(String bodyMessage)
     {
@@ -145,7 +145,8 @@ public class Message implements Serializable
 
     /**
      *  Add new reply message to this message
-     *  @param replyMessage     the message that you would like to reply
+     *  @param replyMessage the message that you would like to reply
+     *  @return message
      * */
     public Message addReplyMessage(Message replyMessage)
     {
@@ -176,30 +177,41 @@ public class Message implements Serializable
      * */
     public void showMessage()
     {
-        System.out.println("-------------------------------------------------");
+        System.out.println("=================================================");
         System.out.println("[Message created at " + this.createdDate + "]");
         System.out.println("-------------------------------------------------");
         System.out.println("SUBJECT: " + this.subject);
         System.out.println("FROM:    " + this.from);
         System.out.println("TO:      " + this.to);
-        System.out.println("=================================================");
+        System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - -");
         System.out.println(this.bodyMessage);
-        System.out.println("=================================================");
         System.out.println("-------------------------------------------------");
         System.out.println("[Message sent at " + this.deliverDate + "]");
-        System.out.println("-------------------------------------------------");
-        for (Message msg : this.replyMessages)
+        System.out.println("=================================================");
+        if (this.replyMessages.size() == 0)
         {
-            System.out.println(".................................................");
-            System.out.println("SUBJECT: " + msg.subject);
-            System.out.println("FROM:    " + msg.from);
-            System.out.println("TO:      " + msg.to);
-            System.out.println("=================================================");
-            System.out.println(msg.bodyMessage);
-            System.out.println("=================================================");
-            System.out.println(".................................................");
-            System.out.println("[Reply sent at " + msg.deliverDate + "]");
-            System.out.println(".................................................");
+            System.out.println("-------------------------------------------------");
+            System.out.println("                     NO REPLY                    ");
+            System.out.println("-------------------------------------------------");
+
+        }
+        else
+        {
+            System.out.println("-------------------------------------------------");
+            System.out.println("                      REPLY                      ");
+            System.out.println("-------------------------------------------------");
+
+            for (Message msg : this.replyMessages)
+            {
+                System.out.println("=================================================");
+                System.out.println("SUBJECT: " + "[RE]" + msg.subject);
+                System.out.println(msg.from + " Wrote :");
+                System.out.println("- - - - - - - - - - - - - - - - - - - - - - - - -");
+                System.out.println(msg.bodyMessage);
+                System.out.println("-------------------------------------------------");
+                System.out.println("[Replied at " + msg.deliverDate + "]");
+                System.out.println("=================================================");
+            }
         }
     }
 

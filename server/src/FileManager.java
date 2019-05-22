@@ -109,7 +109,7 @@ public class FileManager
         }
         try
         {
-            writer = new BufferedWriter(new FileWriter(filename, true));
+            writer = new BufferedWriter(new FileWriter(filename));
         }
         catch (IOException ioe)
         {

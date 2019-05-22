@@ -18,7 +18,7 @@ public class AuthHandler
         FileManager fileManager = new FileManager();
         boolean isAlreadyExist = false;
         boolean isLoginSuccess;
-        String namePath = "C:/Users/USER/Desktop/EmailJavaProject/database/user/" + username + ".txt";
+        String namePath = "../../database/user/" + username + ".txt";
         isAlreadyExist = fileManager.openRead(namePath);
         /* If there is a file */
         if (isAlreadyExist)
@@ -49,8 +49,9 @@ public class AuthHandler
         FileManager fileManager = new FileManager();
         boolean bOk = false;
 
-        fileManager.createDir("../../database/user/");
-        fileManager.createDir("../../database/inbox/");
+        fileManager.createDir("../../database/User/");
+        fileManager.createDir("../../database/message-collection/");
+
 
         String namePath = "../../database/user/" + username + ".txt";
 
@@ -68,7 +69,8 @@ public class AuthHandler
         fileManager.closeWrite();
 
         /* Create message path for this client */
-        bOk = fileManager.createDir("../../database/inbox/"+username);
+        bOk = fileManager.createDir("../../database/message-collection/"+username+"/inbox");
+        bOk = fileManager.createDir("../../database/message-collection/"+username+"/outbox");
 
         return bOk;
     }

@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 import java.io.Serializable;
-
 /**
  * Datatype of information that use in this simpleMessageSystem program which have a lot of properties
  * Such as command: command or request message that tells server what client want to do.
  *         message: messages that ase sent along with the packet that have to do some operation such as sending, deleting, etc.
- *         username: username of the client password: password of the client
+ *         username: username of the client
+ *         password: password of the client
  *         inboxMessage: Sometimes server sent the entire messages that client which is inboxMessage.
  *         isSuccess: status flag that descrice how everythings in this request is alright.
  *
@@ -18,14 +18,15 @@ public class Packet implements Serializable
 {
 
     private static final long serialVersionUID = 1L;
-    private String command; /* command text that describe the action type of this packet */
-    private Message message; /* message message that are relate or invoke in this packet */
-    private String username; /* username client that send this packet or do this operation */
-    private String password; /* password password of the client */
-    private ArrayList<Message> inboxMessage; /* inboxMessage list of message in client's inbox */
-    private boolean isSuccess; /* isSuccess success flag of the operation */
+    private String command;                     /* command text that describe the action type of this packet */
+    private Message message;                    /* message      message that are relate or invoke in this packet */
+    private String username;                    /* username     client that send this packet or do this operation */
+    private String password;                    /* password     password of the client */
+    private ArrayList<Message> inboxMessage;    /* inboxMessage list of message that keep all message that other sent to this client*/
+    private ArrayList<Message> outboxMessage;   /* outboxMessage list of message that keep all message that client sent to other */
+    private boolean isSuccess;                  /* isSuccess    success flag of the operation */
 
-    /**
+	/**
      * Get the command that sent along with this packet
      *
      * @return string that describe the action type
@@ -111,7 +112,6 @@ public class Packet implements Serializable
 
     /**
      * Get the inbox messages
-     *
      * @return inbox messages
      */
     public ArrayList<Message> getInboxMessage()
@@ -121,7 +121,6 @@ public class Packet implements Serializable
 
     /**
      * Set the inbox messages's value
-     *
      * @param inboxMessage inboxMessage that server sent to client
      */
     public Packet setInboxMessage(ArrayList<Message> inboxMessage)
@@ -131,9 +130,28 @@ public class Packet implements Serializable
     }
 
     /**
+     * Get the outbox messages
+     * @return outbox messages
+     */
+    public ArrayList<Message> getOutboxMessage()
+    {
+        return this.outboxMessage;
+    }
+
+    /**
+     * Set the outbox messages's value
+     * @param outboxMessage outboxMessage that server sent to client
+     */
+    public Packet setOutboxMessage(ArrayList<Message> outboxMessage)
+    {
+        this.outboxMessage = outboxMessage;
+        return this;
+    }
+
+    /**
      * get the status flag that describe the status of this operation
-     *
-     * @return true if everythings is alright false if somethins want wrong
+     * @return true if everythings is alright
+     *         false if somethins want wrong
      */
     public boolean getIsSuccess()
     {
@@ -142,7 +160,6 @@ public class Packet implements Serializable
 
     /**
      * Set the status flag
-     *
      * @param isSuccess
      * @return
      */
@@ -154,13 +171,11 @@ public class Packet implements Serializable
 
     /**
      * Method to print all the information that this packet have
-     *
      * @return string that show all member data.
      */
     @Override
     public String toString()
     {
-        return "Packet {command:" + command + ", message:" + message + ", username:" + username + ", password:"
-                + password + "}";
+        return "Packet {command:" + command + ", message:" + message + ", username:" + username + ", password:" + password + "}";
     }
 }

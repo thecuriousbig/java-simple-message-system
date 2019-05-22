@@ -41,6 +41,7 @@ public class ClientHandler implements Runnable
         try
         {
             ArrayList<Message> inboxMessage = null;
+            ArrayList<Message> outboxMessage = null;
             /* Get the input stream from the connected socket */
             InputStream inputStream = clientSocket.getInputStream();
             /* Create a DataInputStream so we can read data from it */
@@ -72,28 +73,42 @@ public class ClientHandler implements Runnable
                         System.out.println("Register failed ..");
                     break;
                 case "sendMessage":
-                    isSuccessFlag = MessageHandler.send(inputPacket.getMessage(), inputPacket.getUsername());
+                    isSuccessFlag = MessageHandler.send(inputPacket.getMessage(), inputPacket.getMessage().getFromAddress(), "outbox");
+                    isSuccessFlag = MessageHandler.send(inputPacket.getMessage(), inputPacket.getMessage().getToAddress(), "inbox");
                     if (isSuccessFlag)
                         System.out.println("Send message successfully ..");
                     else
                         System.out.println("Send message failed ..");
                     break;
                 case "replyMessage":
-                    isSuccessFlag = MessageHandler.reply(inputPacket.getMessage(), inputPacket.getUsername());
-                    if (isSuccessFlag)
+                    String username = inputPacket.getUsername();
+                    /* First search the fromAddress's outbox */
+                    isSuccessFlag = MessageHandler.reply(inputPacket.getMessage(), username, inputPacket.getMessage().getFromAddress(), "outbox");
+                    /* If file not found then search in the inbox instead */
+                    if (!isSuccessFlag)
+                        isSuccessFlag = MessageHandler.reply(inputPacket.getMessage(), username, inputPacket.getMessage().getFromAddress(), "inbox");
+                    /* Second search the toAddress's inbox */
+                    isSuccessFlag = MessageHandler.reply(inputPacket.getMessage(), username, inputPacket.getMessage().getToAddress(), "inbox");
+                    /* If file not found then search in the outbox instead */
+                    if (!isSuccessFlag)
+                        isSuccessFlag = MessageHandler.reply(inputPacket.getMessage(), username, inputPacket.getMessage().getToAddress(), "outbox");
+                    /* If everything is ok then log the successful message */
+                        if (isSuccessFlag)
                         System.out.println("Reply message successfully ..");
                     else
                         System.out.println("Reply message failed ..");
                     break;
                 case "deleteMessage":
-                    isSuccessFlag = MessageHandler.delete(inputPacket.getMessage(), inputPacket.getUsername());
+                    isSuccessFlag = MessageHandler.delete(inputPacket.getMessage(), inputPacket.getMessage().getFromAddress(), "outbox");
+                    isSuccessFlag = MessageHandler.delete(inputPacket.getMessage(), inputPacket.getMessage().getToAddress(), "inbox");
                     if (isSuccessFlag)
                         System.out.println("Delete message successfully ..");
                     else
                          System.out.println("Delete message failed ..");
                     break;
                 case "getMessage":
-                    inboxMessage = MessageHandler.getMessage(inputPacket.getUsername());
+                    outboxMessage = MessageHandler.getMessage(inputPacket.getUsername(), "outbox");
+                    inboxMessage = MessageHandler.getMessage(inputPacket.getUsername(), "inbox");
                     if (isSuccessFlag)
                         System.out.println("Get messages successfully ..");
                     else
@@ -107,7 +122,7 @@ public class ClientHandler implements Runnable
 
             /* Create output packet */
             /* Other parameter is set to null because client don't actually need it */
-            Packet outPacket = new Packet().setInboxMessage(inboxMessage).setIsSuccess(isSuccessFlag);
+            Packet outPacket = new Packet().setInboxMessage(inboxMessage).setOutboxMessage(outboxMessage).setIsSuccess(isSuccessFlag);
 
             /* Check what command it is */
             objectOutputStream.writeObject(outPacket);

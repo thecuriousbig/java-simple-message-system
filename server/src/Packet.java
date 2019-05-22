@@ -22,7 +22,8 @@ public class Packet implements Serializable
     private Message message;                    /* message      message that are relate or invoke in this packet */
     private String username;                    /* username     client that send this packet or do this operation */
     private String password;                    /* password     password of the client */
-    private ArrayList<Message> inboxMessage;    /* inboxMessage list of message in client's inbox */
+    private ArrayList<Message> inboxMessage;    /* inboxMessage list of message that keep all message that other sent to this client*/
+    private ArrayList<Message> outboxMessage;   /* outboxMessage list of message that keep all message that client sent to other */
     private boolean isSuccess;                  /* isSuccess    success flag of the operation */
 
 	/**
@@ -122,8 +123,28 @@ public class Packet implements Serializable
      * Set the inbox messages's value
      * @param inboxMessage inboxMessage that server sent to client
      */
-    public Packet setInboxMessage(ArrayList<Message> inboxMessage) {
+    public Packet setInboxMessage(ArrayList<Message> inboxMessage)
+    {
         this.inboxMessage = inboxMessage;
+        return this;
+    }
+
+    /**
+     * Get the outbox messages
+     * @return outbox messages
+     */
+    public ArrayList<Message> getOutboxMessage()
+    {
+        return this.outboxMessage;
+    }
+
+    /**
+     * Set the outbox messages's value
+     * @param outboxMessage outboxMessage that server sent to client
+     */
+    public Packet setOutboxMessage(ArrayList<Message> outboxMessage)
+    {
+        this.outboxMessage = outboxMessage;
         return this;
     }
 
@@ -132,7 +153,8 @@ public class Packet implements Serializable
      * @return true if everythings is alright
      *         false if somethins want wrong
      */
-    public boolean getIsSuccess() {
+    public boolean getIsSuccess()
+    {
         return this.isSuccess;
     }
 
@@ -141,7 +163,8 @@ public class Packet implements Serializable
      * @param isSuccess
      * @return
      */
-    public Packet setIsSuccess(boolean isSuccess) {
+    public Packet setIsSuccess(boolean isSuccess)
+    {
         this.isSuccess = isSuccess;
         return this;
     }

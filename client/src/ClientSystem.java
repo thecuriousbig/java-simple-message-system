@@ -29,9 +29,9 @@ public class ClientSystem
 
         if (isUserLogin)
         {
-
-            System.out.println("                    Main Menu                   ");
-            System.out.println("================================================");
+            System.out.println("-------------------------------------------------");
+            System.out.println("                     Main Menu                   ");
+            System.out.println("-------------------------------------------------");
             System.out.println("1. Create Message");
             System.out.println("2. Show Inbox");
             System.out.println("3. Log out");
@@ -42,10 +42,30 @@ public class ClientSystem
                     client.createMessage();
                     break;
                 case "2":
-                    client.showInbox();
+                    boolean notValidAnswer;
+                    String choose;
+                    do
+                    {
+                        notValidAnswer = false;
+                        System.out.println("Choose one collection to view");
+                        System.out.println("1. inbox");
+                        System.out.println("2. outbox");
+                        choose = IOUtils.getString("Enter answer > ");
+                        if (choose.compareTo("1") == 0)
+                            client.showMessageCollection("inbox");
+                        else if (choose.compareTo("2") == 0)
+                            client.showMessageCollection("outbox");
+                        else
+                        {
+                            System.out.println("Invalid Answer. Please enter again.");
+                            notValidAnswer = true;
+                        }
+                    }
+                    while (notValidAnswer);
                     break;
                 case "3":
                     isUserLogin = !(Authentication.logout(client));
+                    System.out.println("Logging out ..");
                     try
                     {
                         Thread.sleep(1000);
@@ -59,9 +79,9 @@ public class ClientSystem
         }
         else
         {
-
-            System.out.println("           BMTeam Simple Message System          ");
-            System.out.println("=================================================");
+            System.out.println("--------------------------------------------------");
+            System.out.println("           BMTeam Simple Message System           ");
+            System.out.println("--------------------------------------------------");
             System.out.println("1. Login");
             System.out.println("2. Register");
             System.out.println("3. Exit");
@@ -69,8 +89,7 @@ public class ClientSystem
             switch (userInput) {
 
             case "1":
-                System.out.println("------------------Login------------------");
-                // System.out.print("Enter username (No special character) : ");
+                System.out.println("------------------  Login  ------------------");
                 username = null;
                 do
                 {
@@ -102,7 +121,7 @@ public class ClientSystem
                 break;
 
             case "2":
-                System.out.println("---------------Register----------------");
+                System.out.println("---------------  Register  ----------------");
                 // System.out.print("Enter username (No special character) : ");
                 username = null;
                 do
@@ -143,7 +162,6 @@ public class ClientSystem
 
             case "3":
                 isExit = true;
-                System.out.println("Logging out ..");
                 try
                 {
                     Thread.sleep(1000);

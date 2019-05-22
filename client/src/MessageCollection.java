@@ -32,15 +32,12 @@ public class MessageCollection
     public void showAllMessages()
     {
         int i = 0;
-        System.out.println("-------------------------------------------");
-        System.out.println("                   INBOX                   ");
-        System.out.println("-------------------------------------------");
+
         for(Message msg : messages)
         {
             i++;
             System.out.println(i+") "+ msg.getSubject()+" FROM "+msg.getFromAddress()+" "+msg.getDeliverDate().toString());
         }
-        System.out.println("-------------------------------------------");
     }
 
     public int getMessagesAmount()

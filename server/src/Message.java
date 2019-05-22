@@ -172,36 +172,6 @@ public class Message implements Serializable
     }
 
     /**
-     *  Show all content of this message
-     * */
-    public void showMessage()
-    {
-        System.out.println("-------------------------------------------------");
-        System.out.println("[Message created at " + this.createdDate + "]");
-        System.out.println("-------------------------------------------------");
-        System.out.println("SUBJECT: " + this.subject);
-        System.out.println("FROM:    " + this.from);
-        System.out.println("TO:      " + this.to);
-        System.out.println("-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -");
-        System.out.println(this.bodyMessage);
-        System.out.println("-------------------------------------------------");
-        System.out.println("[Message sent at " + this.deliverDate + "]");
-        System.out.println("-------------------------------------------------");
-        for (Message msg : this.replyMessages)
-        {
-            System.out.println(".................................................");
-            System.out.println("SUBJECT: " + msg.subject);
-            System.out.println("FROM:    " + msg.from);
-            System.out.println("TO:      " + msg.to);
-            System.out.println("-  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -  -");
-            System.out.println(msg.bodyMessage);
-            System.out.println(".................................................");
-            System.out.println("[Reply sent at " + msg.deliverDate + "]");
-            System.out.println(".................................................");
-        }
-    }
-
-        /**
      * Show information of this message
      */
     @Override
