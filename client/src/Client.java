@@ -1,16 +1,16 @@
+/**
+ * Client
+ *
+ * The {@code Client} class represent the user that currently login to the system and <br>
+ * can perform many operation such as create the message or view the messageCollection and etc.
+ * <p>
+ * Created by Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
+ *           Tanatorn Nateesanprasert (Big) 59070501035 <br>
+ * On 20-May-2019
+ */
+
 import java.io.IOException;
 
-import javax.lang.model.util.ElementScanner6;
-
-import org.w3c.dom.css.ElementCSSInlineStyle;
-
-/**
- *  Client class is for represent identity of client user
- *  in the email system
- *
- *  Create by Manchuporn Pungtippimanchai (SaiMai) 59070501060
- *  and Tanatorn Nateesanprasert (Big) 59070501035
- * */
 public class Client
 {
     /** Username that use to identify the client */
@@ -26,8 +26,11 @@ public class Client
     private MessageCollection outbox;
 
     /**
-     *  Constructor of singleton class
-     * */
+     * Constructor of Client that use for initialize the value of the member data.
+     *
+     * @param username username of this client
+     * @param password password of this client
+     */
     public Client(String username, String password)
     {
         this.username = username;
@@ -37,28 +40,19 @@ public class Client
     }
 
     /**
-     * Create new message
-     * @return true if create successful and send,
-     *          false if cancel.
-     * */
-    public void createMessage()
-    {
-        Editor.createMessage(username);
-    }
-
-    /**
-     *  Get username of this client user
-     *  @return client's username
-     * */
+     * Get the value of this client's username.
+     *
+     * @return the username of this client.
+     */
     public String getUsername()
     {
         return username;
     }
 
     /**
-     * Set username of this client user
+     * Set the username's value of this client.
      *
-     * @param username name of this user
+     * @param username username that want to set as the username of this client
      */
     public void setUsername(String username)
     {
@@ -66,30 +60,32 @@ public class Client
     }
 
     /**
-     * get password of this client user
+     * Get the value of this client's password.
      *
-     * @return client's password
+     * @return the password of this client.
      */
-    public String getPassword() {
+    public String getPassword()
+    {
         return password;
     }
 
     /**
-     * Set password of this client user
+     * Set the password's value of this client.
      *
-     * @param password of this user
+     * @param password password that want to set as the password of this client
      */
-    public void setPassword(String password) {
+    public void setPassword(String password)
+    {
         this.password = password;
     }
 
     /**
      * Get the inbox which is MessageCollection
      * that keep all message that this client receive
-     * the message from the other
+     * the message from the other.
      *
-     *  @return inbox of this client
-     * */
+     * @return messageCollection (inbox) of this client.
+     */
     public MessageCollection getInbox()
     {
         return inbox;
@@ -110,9 +106,9 @@ public class Client
     /**
      * Get the outbox which is MessageCollection
      * that keep all message that this client sent
-     * to the other
+     * to the other.
      *
-     * @return outbox of this client
+     * @return messageCollection (outbox) of this client.
      */
     public MessageCollection getOutbox()
     {
@@ -122,9 +118,9 @@ public class Client
     /**
      * Set the value of outbox which is MessageCollection
      * that keep all message that this client sent
-     * to the other
+     * to the other.
      *
-     * @param messages collection of message that keep in this client's outbox
+     * @param messages collection of message that keep in this client's outbox.
      */
     public void setOutbox(MessageCollection messages)
     {
@@ -132,8 +128,21 @@ public class Client
     }
 
     /**
-     *  forward a selected message
-     *  @param message message that are going to be forwarded by this client to other client
+     * Create the message by using the createMessage() method from the {@code Editor} class.
+     * The message that are created. Client can decide to send the message to the other client
+     * or cancel (the message that are just created will be delete).
+     */
+    public void createMessage()
+    {
+        Editor.createMessage(username);
+    }
+
+    /**
+     * Client can forward the message from their own MessageCollection by select the message
+     * that want to forward. With the help of Editor class that help client perform the operation
+     * instead of client do it by itself.
+     *
+     * @param message message that are going to be forwarded by this client.
      * */
     public void forwardMessage(Message message)
     {
@@ -144,9 +153,12 @@ public class Client
     }
 
     /**
-     * reply a selected message
+     * Client can reply the message from their own MessageCollection by select one of its
+     * message and then reply it by calling Editor to help the client perform the reply message
+     * operation. By passing the reply message to the server. The server will operate and return
+     * it to the client once the operation is success
      *
-     * @param message message that will have a reply message
+     * @param message The message that client want to reply the other client.
      */
     public void replyMessage(Message message)
     {
@@ -157,282 +169,172 @@ public class Client
     }
 
     /**
-     * delete a selected message
+     * Client can delete its own message in the inbox or outbox by calls this method.
+     * To delete the message, Client need to send the delete message request to the server.
+     * <br>
+     * The packet contains the message that want to be deleted and the delete message command.
      *
-     * @param message message that want to be deleted or remove from the collection
+     * @param message message that will be deleted or removed from the message collection of this client.
      */
     public void deleteMessage(Message message)
     {
-        /* Create serverHandler */
-        ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
         /* Create a packet to send to the server */
         Packet packet = new Packet().setCommand("deleteMessage").setMessage(message);
-        /* Connect to server */
-        boolean isConnect = serverHandler.connect();
-        if (!isConnect)
-        {
-            System.out.println("cannot connect to server");
-        }
-        else
-        {
-            System.out.println("sending request ..");
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch (Exception e)
-            {
-            }
-            boolean bOk = serverHandler.send(packet);
-            if (bOk)
-                System.out.println("wait for response ..");
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch (Exception e)
-            {
-            }
 
-            Packet receivePacket = serverHandler.receive();
+        /* Call the ConnectionManager to perform the delete message */
+        ConnectionManager connectionManager = ConnectionManager.getInstance();
 
-            /* if sent message successful */
-            if (receivePacket.getIsSuccess())
-            {
-                System.out.println("Sent message complete");
-            }
-            serverHandler.close();
-
-            if (receivePacket.getIsSuccess())
-            {
-                System.out.println("delete message success ..");
-                try
-                {
-                    Thread.sleep(1000);
-                }
-                catch (Exception e)
-                {
-                }
-            }
-            else
-            {
-                System.out.println("delete message failed .. ");
-                try
-                {
-                    Thread.sleep(1000);
-                }
-                catch (Exception e)
-                {
-                }
-            }
-
-
-        }
+        /* Delete message operation */
+        connectionManager.messageOperation(packet, "delete");
     }
 
     /**
-     * Update and fetch all the messages in the inbox
+     * Every time client want to view their inbox or outbox. Client have to connect
+     * to the server and send the "get message" request to the server by sending the
+     * message packet.
+     * <br>
+     * And the server will response by return the message collection for the client.
+     *
+     * @return the flag that represent the status of get message operation.
      */
     public boolean updateMessageCollection()
     {
-        /* Create serverHandler */
-        ServerHandler serverHandler = new ServerHandler("127.0.0.1", 8080);
-        /* Create a packet to send to the server */
-        Packet packet = new Packet().setCommand("getMessage").setUsername(username);
-        /* connect to server */
-        boolean isConnect = serverHandler.connect();
-        if (!isConnect)
+         try
         {
-            System.out.println("cannot connect to server!");
+            /* Create a packet to send to the server */
+            Packet messagePacket = new Packet().setCommand("getMessage").setUsername(username);
+
+            /* Get the ConnectionManager instance to perform this operation */
+            ConnectionManager connectionManager = ConnectionManager.getInstance();
+
+            /* After calling the messageOperation(). It will return the response packet sent from the server */
+            Packet serverPacket = connectionManager.messageOperation(messagePacket, "Update");
+
+            if (serverPacket.getIsSuccess())
+            {
+                /* Update the messageCollection by using the messageCollection that sent from the server */
+                this.inbox.setMessages(serverPacket.getInboxMessage());
+                this.outbox.setMessages(serverPacket.getOutboxMessage());
+            }
+            else
+                /* Return false because get the message failed */
+                return false;
+
+            return serverPacket.getIsSuccess();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Problem Occurred in the server !!");
             return false;
         }
-        else
-        {
-            System.out.println("sending .. ");
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch (Exception e)
-            {
-            }
-            /* send the message */
-            boolean bOk = serverHandler.send(packet);
-
-            if (bOk)
-                System.out.println("waiting for response ..");
-            try
-            {
-                Thread.sleep(1000);
-            }
-            catch (Exception e)
-            {
-            }
-
-            Packet receivePacket = serverHandler.receive();
-
-            /* if sent message successful */
-            if (receivePacket.getIsSuccess())
-            {
-                System.out.println("Sent message complete");
-            }
-            serverHandler.close();
-            /* update the message collection (inbox) */
-            this.getInbox().setMessages(receivePacket.getInboxMessage());
-            this.getOutbox().setMessages(receivePacket.getOutboxMessage());
-            return receivePacket.getIsSuccess();
-        }
     }
-
 
     /**
-     * Show all receive message in Inbox message
-     * */
+     * Show the {@code MessageCollection} either inbox or outbox of this client.
+     * By calling updateMessageCollection() in this clss to fetch the messageCollection
+     * of this client that are stored in the server's database. And use the messageCollection
+     * that received from the server to show to the user.
+     * @param where Which MessageCollection that user want to view. (Inbox or Outbox)
+     */
     public void showMessageCollection(String where)
     {
-        boolean bOk = updateMessageCollection();
-        if (bOk)
+        /* Update the message collection */
+        boolean updateStatus = updateMessageCollection();
+
+        /* If the update operation is successful */
+        if (updateStatus)
         {
+            int amountOfMessages;           /* amount of the message */
+            MessageCollection collection;   /* message collection */
+
             System.out.println("Get messages success ..");
-        }
-        if (where.compareTo("inbox") == 0)
-        {
-            if(inbox.getMessagesAmount() == 0)
+
+            /* If client want to view inbox */
+            if (where.compareTo("inbox") == 0)
+            {
+                collection = inbox;
+                amountOfMessages = inbox.getMessagesAmount();
+            }
+            else
+            {
+                collection = outbox;
+                amountOfMessages = outbox.getMessagesAmount();
+            }
+
+            /* Check if inbox or outbox is empty or not */
+            if(amountOfMessages == 0)
             {
                 System.out.println("-------------------------------------------");
-                System.out.println("|                  INBOX                  |");
+                System.out.println("                   " + where.toUpperCase());
                 System.out.println("-------------------------------------------");
-                System.out.println("No such any message in the inbox.");
+                System.out.println("No such any message in the " + where);
                 System.out.println("-------------------------------------------");
             }
             else
             {
+                /* Show all message in the collection */
                 System.out.println("-------------------------------------------");
-                System.out.println("|                  INBOX                  |");
+                System.out.println("                   " + where.toUpperCase());
                 System.out.println("-------------------------------------------");
-                inbox.showAllMessages();
+                collection.showAllMessages();
                 System.out.println("-------------------------------------------");
+
                 int index = -1;
 
+                /* Loop asking user which message that user want to view the full detail */
                 while (index == -1)
                 {
-                    System.out.println("Select one message [1-"+inbox.getMessagesAmount()+"] (enter 0 for back to main menu)");
+                    /* Get the user input */
+                    System.out.println("Select one message [1-"+collection.getMessagesAmount()+"] (enter 0 for back to main menu)");
                     index = IOUtils.getInteger("Enter answer > ");
+
                     /* Get the \n that still in the system.in buffer */
                     IOUtils.getBareString();
                 }
-                if (index > 0 && (index-1 < inbox.getMessagesAmount()))
+
+                /* If user input valid index of message in the collection */
+                if (index > 0 && (index-1 < collection.getMessagesAmount()))
                 {
                     boolean notValid;
+
                     do
                     {
                         notValid = false;
                         /* Get the selected message from the message collection */
-                        Message selectedMsg = inbox.getOneMessage(index-1);
-                        /* show the detail of message */
+                        Message selectedMsg = collection.getOneMessage(index-1);
+
                         selectedMsg.showMessage();
 
+                        /* Get the user input about what operation that user want to do */
                         System.out.println("Select one operation below");
                         System.out.println("1. Forward message");
                         System.out.println("2. Reply message");
                         System.out.println("3. Delete message");
                         System.out.println("0. Back to menu");
                         String option = IOUtils.getString("Enter answer > ");
+
+                        /* Perform operation */
                         switch (option)
                         {
+                            /* Forward */
                             case "1":
                                 this.forwardMessage(selectedMsg);
                                 break;
+                            /* Reply */
                             case "2":
                                 this.replyMessage(selectedMsg);
                                 break;
+                            /* Delete */
                             case "3":
                                 this.deleteMessage(selectedMsg);
                                 break;
+                            /* Do nothing */
                             case "0":
                                 System.out.println("Going back to main menu ..");
-                                try
-                                {
-                                    Thread.sleep(1000);
-                                }
-                                catch (Exception e)
-                                {
-                                }
                                 break;
+                            /* Invalid input */
                             default:
-                                notValid = true;
-                                break;
-                        }
-                    }
-                    while (notValid);
-                }
-            }
-        }
-        else
-        {
-            if (outbox.getMessagesAmount() == 0)
-            {
-                System.out.println("-------------------------------------------");
-                System.out.println("|                  OUTBOX                 |");
-                System.out.println("-------------------------------------------");
-                System.out.println("No such any message in the outbox.");
-                System.out.println("-------------------------------------------");
-            }
-            else
-            {
-                System.out.println("-------------------------------------------");
-                System.out.println("|                  OUTBOX                 |");
-                System.out.println("-------------------------------------------");
-                outbox.showAllMessages();
-                System.out.println("-------------------------------------------");
-                int index = -1;
-
-                while (index == -1)
-                {
-                    System.out.println("Select one message [1-" + outbox.getMessagesAmount() + "] (enter 0 for back to main menu)");
-                    index = IOUtils.getInteger("Enter answer > ");
-                    /* Get the \n that still in the system.in buffer */
-                    IOUtils.getBareString();
-                }
-                if (index > 0 && (index - 1 < outbox.getMessagesAmount()))
-                {
-                    boolean notValid;
-                    do
-                    {
-                        notValid = false;
-                        /* Get the selected message from the message collection */
-                        Message selectedMsg = outbox.getOneMessage(index - 1);
-                        /* show the detail of message */
-                        selectedMsg.showMessage();
-
-                        System.out.println("Select one operation below");
-                        System.out.println("1. Forward message");
-                        System.out.println("2. Reply message");
-                        System.out.println("3. Delete message");
-                        System.out.println("0. Back to menu");
-                        String option = IOUtils.getString("Enter answer > ");
-                        switch (option)
-                        {
-                            case "1":
-                                this.forwardMessage(selectedMsg);
-                                break;
-                            case "2":
-                                this.replyMessage(selectedMsg);
-                                break;
-                            case "3":
-                                this.deleteMessage(selectedMsg);
-                                break;
-                            case "0":
-                                System.out.println("Going back to main menu ..");
-                                try
-                                {
-                                    Thread.sleep(1000);
-                                }
-                                catch (Exception e)
-                                {
-                                }
-                                break;
-                            default:
+                                System.out.println("Invalid input !!");
                                 notValid = true;
                                 break;
                         }
@@ -442,5 +344,4 @@ public class Client
             }
         }
     }
-
 }

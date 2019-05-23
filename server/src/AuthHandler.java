@@ -1,71 +1,107 @@
 /**
- * AuthHandler.java Handle operation like register login
+ * AuthHandler
  *
- * Created by Tanatorn Nateesanprasert (big) 59070501035 Manchuporn
- * Pungtippimanchai (mai) 59070501060
+ * The {@code AuthHandler} class that represent that class that act <br>
+ * like the service that get the authentication request from the client <br>
+ * And then perform operation (serve the client) like Login or register.
+ * <p>
+ * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
+ *            Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
+ * On 20-May-2019
  */
 
 public class AuthHandler
 {
 
     /**
-     * login operation by validate user credential
+     * Method to perform the login operation by receiving the
+     * username and password as the parameter. In order to perform the
+     * validating the user's credential that sent from the client.
+     * This method operate by calling {@code FileManager} to do the
+     * read and write the file for it.
      *
-     * @param client client's credential for validating
+     * @param username the username that client sent to the server.
+     * @param password the password that will be stored in the database.
+     * @return The flag that represent the overall status of this operation.
      */
     public static boolean login(String username, String password)
     {
         FileManager fileManager = new FileManager();
+
+        /* Declare and initialize the variable use for validate user credential */
         boolean isAlreadyExist = false;
         boolean isLoginSuccess;
+
+        /* pathname that fileManager will searched in */
         String namePath = "../../database/user/" + username + ".txt";
+
+        /* Open the file and check if file is already exist */
         isAlreadyExist = fileManager.openRead(namePath);
-        /* If there is a file */
+
+        /* If the file is already exist */
         if (isAlreadyExist)
         {
-            /* Check a password */
             System.out.println("Validating the password ..");
+
+            /* Validate the password if the password is equivalent to the password in the database */
             isLoginSuccess = password.equals(fileManager.getNextLine()) ? true : false;
+
+            /* If validate correct */
             if (isLoginSuccess)
                 System.out.println("Password matched !!");
             else
                 System.out.println("Password not matched !!");
+
             /* close the file */
             fileManager.closeRead();
         }
         else
             /* login failed because this client are not register yet */
             isLoginSuccess = false;
+
         return isLoginSuccess;
     }
 
     /**
-     * create a file and store the client's information
+     * Method to perform the register operation by receiving the
+     * username and password as the parameter. This method create
+     * the account by checking if this username are already exist
+     * in the database. This class perform the register operation
+     * by the help of {@code FileManager} to handle all the read
+     * and write file operation for this method.
      *
-     * @param client client's credential for creating a file
+     * @param username username of the user that want to create the account.
+     * @param password password of the user that will be stored in the database.
+     * @return The flag that represent the overall status of this operation.
      */
     public static boolean register(String username, String password)
     {
         FileManager fileManager = new FileManager();
+
         boolean bOk = false;
 
-        fileManager.createDir("../../database/User/");
+        /* FileManager create the directory for storing the file */
+        fileManager.createDir("../../database/user/");
         fileManager.createDir("../../database/message-collection/");
 
-
+        /* namepath that fileManager will perform the write file operation */
         String namePath = "../../database/user/" + username + ".txt";
 
         /* create a file */
         bOk = fileManager.create(namePath);
 
+        /* If create failed */
         if (!bOk)
             return false;
-        /* open */
+
+        /* open and write the file */
         bOk = fileManager.openWrite(namePath);
-        /* write a password */
+
         if (bOk)
+            /* write a password */
             bOk = fileManager.writeNextLine(password);
-        /* close */
+
+        /* close the file */
         fileManager.closeWrite();
 
         /* Create message path for this client */

@@ -1,35 +1,46 @@
+/**
+ * Packet
+ *
+ * The {@code Packet} that represent the datatype of information that use in this simpleMessageSystem
+ * <p>
+ * Created by Tanatorn Nateesanprasert (big) 59070501035 Manchuporn <br>
+ *            Pungtippimanchai (mai) 59070501060 <br>
+ * On 20-May-2019
+ */
+
 import java.util.ArrayList;
 import java.io.Serializable;
-/**
- * Datatype of information that use in this simpleMessageSystem program which have a lot of properties
- * Such as command: command or request message that tells server what client want to do.
- *         message: messages that ase sent along with the packet that have to do some operation such as sending, deleting, etc.
- *         username: username of the client
- *         password: password of the client
- *         inboxMessage: Sometimes server sent the entire messages that client which is inboxMessage.
- *         isSuccess: status flag that descrice how everythings in this request is alright.
- *
- * Created by Tanatorn Nateesanprasert (big) 59070501035 Manchuporn
- * Pungtippimanchai (mai) 59070501060
- *
- */
 
 public class Packet implements Serializable
 {
-
+    /** UID for deserialization */
     private static final long serialVersionUID = 1L;
-    private String command;                     /* command text that describe the action type of this packet */
-    private Message message;                    /* message      message that are relate or invoke in this packet */
-    private String username;                    /* username     client that send this packet or do this operation */
-    private String password;                    /* password     password of the client */
-    private ArrayList<Message> inboxMessage;    /* inboxMessage list of message that keep all message that other sent to this client*/
-    private ArrayList<Message> outboxMessage;   /* outboxMessage list of message that keep all message that client sent to other */
-    private boolean isSuccess;                  /* isSuccess    success flag of the operation */
+
+    /** command text that describe the action type of this packet */
+    private String command;
+
+    /** message that are relate or invoke in this packet */
+    private Message message;
+
+    /** username of the client that send this packet or do this operation */
+    private String username;
+
+    /** password of the client */
+    private String password;
+
+    /** inboxMessage list of message that keep all message that other sent to this client*/
+    private ArrayList<Message> inboxMessage;
+
+    /** outboxMessage list of message that keep all message that client sent to other */
+    private ArrayList<Message> outboxMessage;
+
+    /** status flag of the operation */
+    private boolean isSuccess;
 
 	/**
-     * Get the command that sent along with this packet
+     * Method to get the command from this packet.
      *
-     * @return string that describe the action type
+     * @return string that describe the action type.
      */
     public String getCommand()
     {
@@ -37,9 +48,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the command's value.
+     * Method to set the command of this packet.
      *
-     * @param command command that want to be set
+     * @param command command that want to be set.
+     * @return This packet instance.
      */
     public Packet setCommand(String command)
     {
@@ -48,9 +60,9 @@ public class Packet implements Serializable
     }
 
     /**
-     * Get the message
+     * Method to get the message of this packet.
      *
-     * @return message
+     * @return message of this packet.
      */
     public Message getMessage()
     {
@@ -58,9 +70,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the message
+     * Method to set the message of this packet.
      *
-     * @param message message of some client that will send to other
+     * @param message The message that will set to this packet.
+     * @return This packet instance.
      */
     public Packet setMessage(Message message)
     {
@@ -69,9 +82,9 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the client's username
+     * Method to get the username of this packet.
      *
-     * @param username
+     * @return username of this packet.
      */
     public String getUsername()
     {
@@ -79,9 +92,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the client's username
+     * Method to set the username of this packet.
      *
-     * @return username of this client
+     * @param username username that will set to this packet.
+     * @return This packet instance.
      */
     public Packet setUsername(String username)
     {
@@ -90,9 +104,9 @@ public class Packet implements Serializable
     }
 
     /**
-     * get the password of the client
+     * Method to get the password of the packet.
      *
-     * @return password of the client
+     * @return password of this packet.
      */
     public String getPassword()
     {
@@ -100,9 +114,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the password of the client
+     * Method to set the password of the packet.
      *
-     * @param password password of the client
+     * @param password password that want to set to this packet.
+     * @return This packet istance.
      */
     public Packet setPassword(String password)
     {
@@ -111,8 +126,9 @@ public class Packet implements Serializable
     }
 
     /**
-     * Get the inbox messages
-     * @return inbox messages
+     * Method to get inbox of this packet.
+     *
+     * @return ArrayList of message from this packet.
      */
     public ArrayList<Message> getInboxMessage()
     {
@@ -120,8 +136,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the inbox messages's value
-     * @param inboxMessage inboxMessage that server sent to client
+     * Method to set the inboxMessage of the packet.
+     *
+     * @param inboxMessage inboxMessage that will set in this packet.
+     * @return This packet instance.
      */
     public Packet setInboxMessage(ArrayList<Message> inboxMessage)
     {
@@ -130,8 +148,9 @@ public class Packet implements Serializable
     }
 
     /**
-     * Get the outbox messages
-     * @return outbox messages
+     * Method to get the outboxMessage of this packet.
+     *
+     * @return the outboxMessage of this packet.
      */
     public ArrayList<Message> getOutboxMessage()
     {
@@ -139,8 +158,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the outbox messages's value
-     * @param outboxMessage outboxMessage that server sent to client
+     * Method to set the outboxMessage of this packet.
+     *
+     * @param outboxMessage outboxMessage that user want to set to this packet.
+     * @return This packet instance.
      */
     public Packet setOutboxMessage(ArrayList<Message> outboxMessage)
     {
@@ -149,9 +170,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * get the status flag that describe the status of this operation
-     * @return true if everythings is alright
-     *         false if somethins want wrong
+     * Method to get the status flag that describe the status of this operation.
+     *
+     * @return true if everythings is alright. <br>
+     *         false if somethins want wrong.
      */
     public boolean getIsSuccess()
     {
@@ -159,9 +181,10 @@ public class Packet implements Serializable
     }
 
     /**
-     * Set the status flag
-     * @param isSuccess
-     * @return
+     * Method to Set the status flag that describe that status of this operation.
+     *
+     * @param isSuccess boolean status that want to set to this packet.
+     * @return This packet instance.
      */
     public Packet setIsSuccess(boolean isSuccess)
     {
@@ -171,6 +194,7 @@ public class Packet implements Serializable
 
     /**
      * Method to print all the information that this packet have
+     *
      * @return string that show all member data.
      */
     @Override
