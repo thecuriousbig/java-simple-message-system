@@ -1,14 +1,3 @@
-/**
- * FileManager
- *
- * The {@code FileManager} class are the class that perform the utilities <br>
- * task about file system
- * <p>
- * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
- *            Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
- * On 20-May-2019
- */
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -17,7 +6,16 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-
+/**
+ * FileManager
+ *
+ * The FileManager class are the class that perform the utilities <br>
+ * task about file system
+ * <p>
+ * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
+ *            Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
+ * On 20-May-2019
+ */
 public class FileManager
 {
     /** BufferedReader for reading the file */
@@ -63,7 +61,7 @@ public class FileManager
     /**
      * Method to create the directory that not exist from the parameter.
      *
-     * @param dir path that want to create the directory
+     * @param dir path that want to create the directory.
      * @return true if directory is created successfully, otherwise false.
      */
     public boolean createDir(String dir)

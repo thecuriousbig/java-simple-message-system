@@ -1,7 +1,7 @@
 /**
  * AuthHandler
  *
- * The {@code AuthHandler} class that represent that class that act <br>
+ * The AuthHandler class that represent that class that act <br>
  * like the service that get the authentication request from the client <br>
  * And then perform operation (serve the client) like Login or register.
  * <p>
@@ -9,7 +9,6 @@
  *            Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
  * On 20-May-2019
  */
-
 public class AuthHandler
 {
 
@@ -17,7 +16,7 @@ public class AuthHandler
      * Method to perform the login operation by receiving the
      * username and password as the parameter. In order to perform the
      * validating the user's credential that sent from the client.
-     * This method operate by calling {@code FileManager} to do the
+     * This method operate by calling FileManager to do the
      * read and write the file for it.
      *
      * @param username the username that client sent to the server.
@@ -67,7 +66,7 @@ public class AuthHandler
      * username and password as the parameter. This method create
      * the account by checking if this username are already exist
      * in the database. This class perform the register operation
-     * by the help of {@code FileManager} to handle all the read
+     * by the help of FileManager to handle all the read
      * and write file operation for this method.
      *
      * @param username username of the user that want to create the account.

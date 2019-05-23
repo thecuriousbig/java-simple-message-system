@@ -1,7 +1,7 @@
 /**
  * Authentication
  *
- * The {@code Authentication} class help the client do the operation <br>
+ * The Authentication class help the client do the operation <br>
  * about verify or validate the identity of client such as login <br>
  * or register or logout.
  * <p>
@@ -37,8 +37,9 @@ public class Authentication
      * This method perform the register operation by get the credential of user
      * such username password as the parameter.
      * <br>
-     * With the help of {@code ConnectionManager}, Allows this method to connect to
+     * With the help of ConnectionManager, Allows this method to connect to
      * the server to perform the register operation properly.
+     *
      * @param username username of the user
      * @param password password of the user
      * @return The flag that represents the overall status of this operation.
@@ -56,7 +57,8 @@ public class Authentication
     }
 
     /**
-     * Logout from the system by set the client to {@code null}
+     * Logout from the system by set the client to null
+     *
      * @param client Client that are currently login to the system.
      * @return the boolean that represent the successful of loggin out operation.
      */

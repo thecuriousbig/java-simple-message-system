@@ -1,16 +1,15 @@
+import java.io.IOException;
+
 /**
  * Client
  *
- * The {@code Client} class represent the user that currently login to the system and <br>
+ * The Client class represent the user that currently login to the system and <br>
  * can perform many operation such as create the message or view the messageCollection and etc.
  * <p>
  * Created by Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
  *           Tanatorn Nateesanprasert (Big) 59070501035 <br>
  * On 20-May-2019
  */
-
-import java.io.IOException;
-
 public class Client
 {
     /** Username that use to identify the client */
@@ -128,7 +127,7 @@ public class Client
     }
 
     /**
-     * Create the message by using the createMessage() method from the {@code Editor} class.
+     * Create the message by using the createMessage() method from the Editor class.
      * The message that are created. Client can decide to send the message to the other client
      * or cancel (the message that are just created will be delete).
      */
@@ -230,10 +229,11 @@ public class Client
     }
 
     /**
-     * Show the {@code MessageCollection} either inbox or outbox of this client.
+     * Show the MessageCollection either inbox or outbox of this client.
      * By calling updateMessageCollection() in this clss to fetch the messageCollection
      * of this client that are stored in the server's database. And use the messageCollection
      * that received from the server to show to the user.
+     *
      * @param where Which MessageCollection that user want to view. (Inbox or Outbox)
      */
     public void showMessageCollection(String where)

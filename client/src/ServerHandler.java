@@ -1,14 +1,3 @@
-/**
- * ServerHandler
- *
- * The {@code ServerHandler} class is the class that perform the communication <br>
- * from client to server.
- * <p>
- * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
- *            Manchuporn Pungtippimanchai (mai) 59070501060 <br>
- * On 20-May-2019
- */
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ObjectInputStream;
@@ -17,6 +6,16 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.net.Socket;
 
+/**
+ * ServerHandler
+ *
+ * The ServerHandler class is the class that perform the communication <br>
+ * from client to server.
+ * <p>
+ * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
+ *            Manchuporn Pungtippimanchai (mai) 59070501060 <br>
+ * On 20-May-2019
+ */
 public class ServerHandler
 {
     /** Address of the server */
@@ -69,7 +68,7 @@ public class ServerHandler
 
     /**
      * Sending any packet from the client to the server.
-     * Sending packet as the type of object using {@code ObjectOutputStream}.
+     * Sending packet as the type of object using ObjectOutputStream.
      *
      * @param packet packet that want to send to server.
      * @return the flag that represent the overall status of this operation.
@@ -96,7 +95,7 @@ public class ServerHandler
 
     /**
      * Receive any packet that sent from the server.
-     * The packet that are received is the {@code ObjectInputStream} type.
+     * The packet that are received is the ObjectInputStream type.
      *
      * @return The packet that received from the server.
      */

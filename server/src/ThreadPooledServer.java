@@ -1,20 +1,19 @@
-/**
- * ThreadPooledServer
- *
- * The {@code ThreadPooledServer} class that represent the server <br>
- * that based on the multithreaded server.
- * <p>
- * Created By Tanatorn Nateesanprasert (big) 59070501035 <br>
- *            Manchuporn Pungtippimanchai (mai) 59070501060 <br>
- * On 20-May-2019
- */
-
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * ThreadPooledServer
+ *
+ * The ThreadPooledServer class that represent the server <br>
+ * that based on the multithreaded server.
+ * <p>
+ * Created By Tanatorn Nateesanprasert (big) 59070501035 <br>
+ *            Manchuporn Pungtippimanchai (mai) 59070501060 <br>
+ * On 20-May-2019
+ */
 public class ThreadPooledServer implements Runnable
 {
     /** port of server is 8080 */

@@ -1,20 +1,19 @@
-/**
- * Message
- *
- * The {@code Message} class that represents the message that contains a lot of information such as <br>
- * toAddress, fromAddress, bodyMessage, subject and more. <br>
- * <p>
- * Created by Tanatorn Nateesanprasert (Big) 59070501035 <br>
- *            Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
- * On 20-May-2019
- */
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.io.Serializable;
 
+/**
+ * Message
+ *
+ * The Message class that represents the message that contains a lot of information such as <br>
+ * toAddress, fromAddress, bodyMessage, subject and more. <br>
+ * <p>
+ * Created by Tanatorn Nateesanprasert (Big) 59070501035 <br>
+ *            Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
+ * On 20-May-2019
+ */
 public class Message implements Serializable
 {
 
@@ -59,6 +58,7 @@ public class Message implements Serializable
 
     /**
      * Method to get the subject of this message.
+     *
      * @return The subject of this message.
      */
     public String getSubject()
@@ -68,6 +68,7 @@ public class Message implements Serializable
 
     /**
      * Method to set the subject of this message.
+     *
      * @param subject the topic of this message.
      * @return This message instance.
      */
@@ -79,6 +80,7 @@ public class Message implements Serializable
 
     /**
      * Method to get the fromAddress of this message.
+     *
      * @return the fromAddress of this message.
      */
     public String getFromAddress()
@@ -88,6 +90,7 @@ public class Message implements Serializable
 
     /**
      * Method to set the fromAddress of this message.
+     *
      * @param fromAddress The address that sent this message.
      * @return This message instance.
      */
@@ -99,6 +102,7 @@ public class Message implements Serializable
 
     /**
      * Method to get the toAddress of this message.
+     *
      * @return the toAddress of this message.
      */
     public String getToAddress()
@@ -108,6 +112,7 @@ public class Message implements Serializable
 
     /**
      * Method to set the toAddress of this message.
+     *
      * @param toAddress The address that this message will sent to.
      * @return This message instance.
      */
@@ -119,6 +124,7 @@ public class Message implements Serializable
 
     /**
      * Method to get the bodyMessage of this message.
+     *
      * @return the body of this message.
      */
     public String getBodyMessage()
@@ -128,6 +134,7 @@ public class Message implements Serializable
 
     /**
      * Method to set the body of this message.
+     *
      * @param bodyMessage content of this message.
      * @return This message instance.
      */
@@ -139,6 +146,7 @@ public class Message implements Serializable
 
     /**
      * Method to get all the reply messages of this message.
+     *
      * @return The arraylist that represent all reply messages of this message.
      */
     public ArrayList<Message> getReplyMessages()
@@ -148,6 +156,7 @@ public class Message implements Serializable
 
     /**
      * Method to add the reply message to this message.
+     *
      * @param replyMessage message that will reply to this message.
      * @return This message instance.
      */
@@ -159,6 +168,7 @@ public class Message implements Serializable
 
     /**
      * Method to get date and time that this message was created.
+     *
      * @return date and time in EEE MMM dd HH:mm:ss zzz yyyy format.
      */
     public Date getCreatedDate()
@@ -168,6 +178,7 @@ public class Message implements Serializable
 
     /**
      * Method to set the createdDate of this message.
+     *
      * @param createdDate The date and time that this message was created.
      * @return This message instance.
      */
@@ -179,6 +190,7 @@ public class Message implements Serializable
 
     /**
      * Method to get date and time that this message was departed.
+     *
      * @return date and time in EEE MMM dd HH:mm:ss zzz yyyy format.
      */
     public Date getDeliverDate()
@@ -188,6 +200,7 @@ public class Message implements Serializable
 
     /**
      * Method to set the deliverDate of this message.
+     *
      * @param deliverDate the date and time of this message.
      * @return This message instance.
      */
@@ -199,6 +212,7 @@ public class Message implements Serializable
 
     /**
      * Method to init the deliverDate of this message.
+     *
      * @return This message instance.
      */
     public Message initialDeliverDate()
@@ -209,6 +223,7 @@ public class Message implements Serializable
 
     /**
      * Method to get the date format for this message.
+     *
      * @return date format which is EEE MMM dd HH:mm:ss zzz yyyy format.
      */
     public DateFormat getDateFormat()

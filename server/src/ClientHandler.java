@@ -1,14 +1,3 @@
-/**
- * ClientHandler
- *
- * The {@code ClientHandler} class are the class that represent the class that <br>
- * handle the client that are connected to the server.
- * <p>
- * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
- *            Manchuporn Pungtippimanchai (mai) 59070501060 <br>
- * On 20-May-2019
- */
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ObjectInputStream;
@@ -17,6 +6,16 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
 
+/**
+ * ClientHandler
+ *
+ * The ClientHandler class are the class that represent the class that <br>
+ * handle the client that are connected to the server.
+ * <p>
+ * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
+ *            Manchuporn Pungtippimanchai (mai) 59070501060 <br>
+ * On 20-May-2019
+ */
 public class ClientHandler implements Runnable
 {
     /** Socket for client to connect to */
@@ -35,7 +34,7 @@ public class ClientHandler implements Runnable
     }
 
     /**
-     * Method that override from the {@code java.lang.Runnable} that
+     * Method that override from the java.lang.Runnable that
      * will call this function suddenly after constructor are called.
      * This method does about the half of the server does by receiving the
      * packet from the client, Analyze the packet and perform the corresponding

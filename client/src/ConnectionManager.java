@@ -1,7 +1,7 @@
 /**
  * ConnectionManager
  *
- * The {@code ConnectionManager} class represents the Manager that handle <br>
+ * The ConnectionManager class represents the Manager that handle <br>
  * all the connection from the server to the client or the client to the server.
  * <p>
  * Created by Tanatorn Nateesanprasert (Big) 59070501035 <br>

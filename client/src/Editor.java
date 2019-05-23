@@ -1,7 +1,9 @@
+import java.util.ArrayList;
+
 /**
  * Editor
  *
- * The {@code Editor} class represents the facade class that <br>
+ * The Editor class represents the facade class that <br>
  * help client handle the operation with the message such as <br>
  * send the message, reply the message and forward the message.
  * <p>
@@ -9,9 +11,6 @@
  *            Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
  * On 20-May-2019
  */
-
-import java.util.ArrayList;
-
 public class Editor
 {
 

@@ -1,7 +1,7 @@
 /**
  * ClientSystem
  *
- * The {@code ClientSystem} class that represent the user interface <br>
+ * The ClientSystem class that represent the user interface <br>
  * use for asking the user input and perform some method such as <br>
  * show the main menu.
  * <p>

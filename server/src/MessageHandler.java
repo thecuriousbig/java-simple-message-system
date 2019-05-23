@@ -1,17 +1,16 @@
+import java.io.File;
+import java.util.ArrayList;
+
 /**
  * MessageHandler
  *
- * The {@code MessageHandler} class that represent the class that <br>
+ * The MessageHandler class that represent the class that <br>
  * handle operation that relate to message such as send, forward, reply.
  * <p>
  * Created by Tanatorn Nateesanprasert (big) 59070501035 <br>
  *            Manchuporn Pungtippimanchai (mai) 59070501060 <br>
  * On 20-May-2019
  */
-
-import java.io.File;
-import java.util.ArrayList;
-
 public class MessageHandler
 {
 
@@ -68,7 +67,7 @@ public class MessageHandler
     /**
      * Method to read the file in a specific pattern to reduce the coupling of code
      * in the other method.
-     * This method read a file by using {@code FileManager} to help doing the
+     * This method read a file by using FileManager to help doing the
      * utilities task such as read a file easier.
      *
      * @param fileManager fileManager that are initialized already.
@@ -184,7 +183,7 @@ public class MessageHandler
     /**
      * Method to send the message from the client to the database in the server.
      * This method have to do the utilities tasks such as read and write the file.
-     * By using {@code FileManager} to helps this method do task about file easier.
+     * By using FileManager to helps this method do task about file easier.
      *
      * @param message message that client want to sent.
      * @param username Name of the user that sent the message.

@@ -1,16 +1,15 @@
+import java.util.ArrayList;
+import java.io.Serializable;
+
 /**
  * Packet
  *
- * The {@code Packet} that represent the datatype of information that use in this simpleMessageSystem
+ * The Packet that represent the datatype of information that use in this simpleMessageSystem
  * <p>
  * Created by Tanatorn Nateesanprasert (big) 59070501035 Manchuporn <br>
  *            Pungtippimanchai (mai) 59070501060 <br>
  * On 20-May-2019
  */
-
-import java.util.ArrayList;
-import java.io.Serializable;
-
 public class Packet implements Serializable
 {
     /** UID for deserialization */

@@ -1,14 +1,3 @@
-/**
- * IOUtils
- *
- * The {@code IOUtils} class for perform the utilities operation such as <br>
- * get the String from user input and get the integer from user input. <br>
- * <p>
- * Modified by Tanatorn Nateesanprasert (Big) 59070501035 <br>
- *             Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
- * On 20-May-2019
- */
-
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,6 +5,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Scanner;
 
+/**
+ * IOUtils
+ *
+ * The IOUtils class for perform the utilities operation such as <br>
+ * get the String from user input and get the integer from user input. <br>
+ * <p>
+ * Modified by Tanatorn Nateesanprasert (Big) 59070501035 <br>
+ *             Manchuporn Pungtippimanchai (SaiMai) 59070501060 <br>
+ * On 20-May-2019
+ */
 public class IOUtils
 {
 

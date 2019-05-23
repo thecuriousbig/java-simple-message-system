@@ -1,16 +1,15 @@
+import java.util.ArrayList;
+
 /**
  * MessageCollection
  *
- * the {@code MessageCollection} class that represent the collection of message <br>
+ * the MessageCollection class that represent the collection of message <br>
  * that the user have (inbox or outbox)
  * <p>
  * Created by Tanatorn Nateesanprasert (Big) 59070501035 <br>
  *            Manchuporn Pungtippimanchi (SaiMai) 59070501060 <br>
  * On 20-May-2019
  */
-
-import java.util.ArrayList;
-
 public class MessageCollection
 {
     /** arraylist of message represent the message that are in the inbox or outbox */
